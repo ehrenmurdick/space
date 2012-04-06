@@ -21,15 +21,13 @@ class Space < Chingu::GameState
     # You'll need your own Chingu::Window#update and Chingu::Window#draw after a while, but just put #super there and Chingu can do its thing.
     #
 
-    self.viewport.game_area = [0, 0, 3000, 3000] 
+    self.viewport.game_area = [0, 0, 1024*2, 768*2] 
 
 
     @bg = Bg.create
-    @bg.factor = 10
-    @planet = Planet.create
-    @planet.x = 500
-    @planet.y = 450
-    @planet.factor = 4
+    @bg.factor = 2
+    @bg.x = 1024
+    @bg.y = 768
     @player = Player.create
     @player.x = 300
     @player.y = 300
