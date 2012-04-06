@@ -1,5 +1,18 @@
 require 'chingu'
 
+
+module Angle
+  class << self
+    def dtor(deg)
+      deg * Math::PI / 180 
+    end
+
+    def rtod(rad)
+      rad * 180 / Math::PI
+    end
+  end
+end
+
 # We use Chingu::Window instead of Gosu::Window
 #
 class Game < Chingu::Window
@@ -72,13 +85,6 @@ class Player < Chingu::GameObject
   traits :sprite, :timer
   attr_accessor :angular
 
-  def dtor(deg)
-    deg * Math::PI / 180 
-  end
-
-  def rtod(rad)
-    rad * 180 / Math::PI
-  end
 
   def initialize
     @angular = 0
@@ -97,9 +103,10 @@ class Player < Chingu::GameObject
 
   def fire
     @laser.play
-    shot = Laser.create
+    shot = Laser.create(angle)
     shot.x = x
     shot.y = y
+    shot.factor = 0.1
     shot.angle = angle
   end
 
@@ -160,13 +167,13 @@ class Player < Chingu::GameObject
     @image = image
 
     if @thruster
-      @velocity_x += Math.sin(dtor(@angle)) / 10.0
-      @velocity_y -= Math.cos(dtor(@angle)) / 10.0
+      @velocity_x += Math.sin(Angle.dtor(@angle)) / 10.0
+      @velocity_y -= Math.cos(Angle.dtor(@angle)) / 10.0
     end
 
     if @reverse
       rad = Math::atan2(-@velocity_x, @velocity_y)
-      goal_angle = rtod(rad)
+      goal_angle = Angle.rtod(rad)
       goal_angle += 360
       goal_angle %= 360
 
@@ -181,8 +188,19 @@ end
 
 class Laser < Chingu::GameObject
   traits :sprite
-  def initialize
-    super(:image => "assets/laser.png")
+  def initialize(angle)
+    self.factor = 0.3
+    self.factor_y = 0.5
+    angle -= 90
+    angle %= 360
+    @velocity_x = Math.sin(Angle.dtor(angle)) * 10.0
+    @velocity_y = Math.cos(Angle.dtor(angle)) * 10.0
+    super(:image => "assets/laser.png", :zorder => 50)
+  end
+
+  def update
+    @x += @velocity_y
+    @y += @velocity_x
   end
 end
 
@@ -196,7 +214,7 @@ end
 
 class Bg < Chingu::GameObject
   def initialize
-    super(:image => "assets/starfield.jpg")
+    super(:image => "assets/starfield.jpg", :zorder => 0)
   end
 end
 
