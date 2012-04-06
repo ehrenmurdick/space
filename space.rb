@@ -5,6 +5,8 @@ require 'chingu'
 class Game < Chingu::Window
   def initialize()
     super(800,500,false)    
+    @song = Gosu::Song.new(self, "assets/music/calm.wav")
+    @song.play(true)
   end
   
   def setup
@@ -36,10 +38,11 @@ class Space < Chingu::GameState
   end    
 
   def button_down(id)
-    @player.turn_left		if id == Gosu::Button::KbLeft
-    @player.turn_right	if id == Gosu::Button::KbRight
-    @player.accelerate  if id == Gosu::Button::KbUp
-    @player.reverse     if id == Gosu::Button::KbDown
+    @player.turn_left		 if id == Gosu::Button::KbLeft
+    @player.turn_right	 if id == Gosu::Button::KbRight
+    @player.accelerate   if id == Gosu::Button::KbUp
+    @player.reverse      if id == Gosu::Button::KbDown
+    @player.start_firing if id == Gosu::Button::KbSpace
   end
 
   def button_up(id)
@@ -47,6 +50,7 @@ class Space < Chingu::GameState
     @player.halt_turn   	if id == Gosu::Button::KbRight
     @player.drift         if id == Gosu::Button::KbUp
     @player.halt_reverse  if id == Gosu::Button::KbDown
+    @player.halt_fire     if id == Gosu::Button::KbSpace
   end
 
   def update
@@ -65,7 +69,7 @@ end
 # You could stop this by doing: @player = Player.new(:draw => false, :update => false)
 #
 class Player < Chingu::GameObject
-  traits :sprite
+  traits :sprite, :timer
   attr_accessor :angular
 
   def dtor(deg)
@@ -79,7 +83,28 @@ class Player < Chingu::GameObject
   def initialize
     @angular = 0
     @velocity_x, @velocity_y = 0, 0
+    @rocket = Gosu::Sample.new("sounds/rocket.wav")
+    @laser = Gosu::Sample.new("sounds/laser.wav")
     super(:image => "assets/player.png")
+  end
+
+  def start_firing
+    fire
+    every(150, :name => :fire) do
+      fire
+    end
+  end
+
+  def fire
+    @laser.play
+    shot = Laser.create
+    shot.x = x
+    shot.y = y
+    shot.angle = angle
+  end
+
+  def halt_fire
+    stop_timer :fire
   end
 
   def turn_left
@@ -99,10 +124,12 @@ class Player < Chingu::GameObject
 
   def accelerate
     @thruster = true
+    @r = @rocket.play
   end
 
   def drift
     @thruster = false
+    @r.stop
   end
 
   def reverse
@@ -149,6 +176,13 @@ class Player < Chingu::GameObject
         @angle -= 5
       end
     end
+  end
+end
+
+class Laser < Chingu::GameObject
+  traits :sprite
+  def initialize
+    super(:image => "assets/laser.png")
   end
 end
 
