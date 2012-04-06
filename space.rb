@@ -56,6 +56,7 @@ class Space < Chingu::GameState
     @player.accelerate   if id == Gosu::Button::KbUp
     @player.reverse      if id == Gosu::Button::KbDown
     @player.start_firing if id == Gosu::Button::KbSpace
+    @player.warp         if id == Gosu::Button::KbW
   end
 
   def button_up(id)
@@ -83,7 +84,7 @@ end
 #
 class Player < Chingu::GameObject
   traits :sprite, :timer
-  attr_accessor :angular
+  attr_accessor :angular, :locked
 
 
   def initialize
@@ -91,17 +92,35 @@ class Player < Chingu::GameObject
     @velocity_x, @velocity_y = 0, 0
     @rocket = Gosu::Sample.new("sounds/rocket.wav")
     @laser = Gosu::Sample.new("sounds/laser.wav")
+    @speed_factor = 1
     super(:image => "assets/player.png")
   end
 
+  def lock!
+    self.locked = true
+  end
+
+  def warp
+    Gosu::Sound["charge.wav"].play
+    lock!
+    after(2300) do
+      Gosu::Sound["jump.wav"].play
+      @speed_factor = 50
+      @thruster = true
+    end
+  end
+
   def start_firing
-    fire
-    every(150, :name => :fire) do
+    unless locked
       fire
+      every(150, :name => :fire) do
+        fire
+      end
     end
   end
 
   def fire
+    return if locked
     @laser.play
     shot = Laser.create(angle)
     shot.x = x
@@ -115,11 +134,13 @@ class Player < Chingu::GameObject
   end
 
   def turn_left
+    return if locked
     @angular = -1
     @image = Gosu::Image["assets/player-l.png"]
   end
 
   def turn_right
+    return if locked
     @angular = 1
     @image = Gosu::Image["assets/player-r.png"]
   end    
@@ -130,6 +151,7 @@ class Player < Chingu::GameObject
   end
 
   def accelerate
+    return if locked
     @thruster = true
     @r = @rocket.play
   end
@@ -140,6 +162,7 @@ class Player < Chingu::GameObject
   end
 
   def reverse
+    return if locked
     @reverse = true
   end
 
@@ -167,8 +190,8 @@ class Player < Chingu::GameObject
     @image = image
 
     if @thruster
-      @velocity_x += Math.sin(Angle.dtor(@angle)) / 10.0
-      @velocity_y -= Math.cos(Angle.dtor(@angle)) / 10.0
+      @velocity_x += (Math.sin(Angle.dtor(@angle)) / 10.0) * @speed_factor
+      @velocity_y -= (Math.cos(Angle.dtor(@angle)) / 10.0) * @speed_factor
     end
 
     if @reverse
@@ -190,7 +213,6 @@ class Laser < Chingu::GameObject
   traits :sprite
   def initialize(angle)
     self.factor = 0.3
-    self.factor_y = 0.5
     angle -= 90
     angle %= 360
     @velocity_x = Math.sin(Angle.dtor(angle)) * 10.0
