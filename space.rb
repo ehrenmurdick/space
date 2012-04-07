@@ -3,6 +3,7 @@ require './src/obj/player'
 require './src/obj/laser'
 require './src/obj/planet'
 require './src/obj/bg'
+require './src/obj/asteroid'
 require './src/states/space'
 require './src/lib/angle'
 

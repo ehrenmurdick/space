@@ -10,6 +10,7 @@ class Space < Chingu::GameState
       Gosu::Song["assets/music/#{s}"]
     end
     srand
+    $state = self
     $songs[rand($songs.length)].play(true)
     #
     # Player will automatically be updated and drawn since it's a Chingu::GameObject
@@ -28,11 +29,18 @@ class Space < Chingu::GameState
 
 
     @player = Player.create
-    @player.target = @planet
     @player.x = 4500
     @player.y = 4500
     @player.angle = 0
     @player.zorder = 200
+    $player = @player
+
+    @asteroids = []
+    rand(50).times do 
+      @asteroids << Asteroid.create
+    end
+
+    @player.target = @planet
 
 
     @parallax.x = @player.x
