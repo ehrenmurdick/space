@@ -10,6 +10,11 @@ module Angle
     def rtod(rad)
       rad * 180 / Math::PI
     end
+
+    def reverse_v(vx, vy)
+      rad = Math::atan2(-vx, vy)
+      (rtod(rad) + 360) % 360
+    end
   end
 end
 
@@ -18,8 +23,6 @@ end
 class Game < Chingu::Window
   def initialize()
     super(800,500,false)    
-    @song = Gosu::Song.new(self, "assets/music/calm.wav")
-    @song.play(true)
   end
   
   def setup
@@ -29,24 +32,35 @@ end
 
 class Space < Chingu::GameState
   trait :viewport
+  attr_accessor :player
+  attr_reader :danger, :song
   def initialize
-    super       # This is always needed if you override Window#initialize
+    super
+    $danger = Gosu::Song["assets/music/danger.wav"]
+    $song = Gosu::Song["assets/music/calm.wav"]
+    $song.play(true)
     #
     # Player will automatically be updated and drawn since it's a Chingu::GameObject
     # You'll need your own Chingu::Window#update and Chingu::Window#draw after a while, but just put #super there and Chingu can do its thing.
     #
 
-    self.viewport.game_area = [0, 0, 1024*2, 768*2] 
+    self.viewport.game_area = [0, 0, 1024*4, 768*4] 
 
+    @parallax = Chingu::Parallax.create(:x => 150, :y => 150)
+    @parallax << { :image => "assets/bg.png", :repeat_x => true, :repeat_y => true, :damping => 10, :x => 150, :y => 150}
 
-    @bg = Bg.create
-    @bg.factor = 2
-    @bg.x = 1024
-    @bg.y = 768
+    @planet = Planet.create
+    @planet.x = 500
+    @planet.y = 800
+
     @player = Player.create
     @player.x = 300
     @player.y = 300
     @player.angle = 0
+    @player.zorder = 200
+
+    @parallax.x = @player.x
+    @parallax.y = @player.y
 
   end    
 
@@ -70,6 +84,8 @@ class Space < Chingu::GameState
   def update
     super
     self.viewport.center_around(@player)
+    @parallax.x = -@player.x
+    @parallax.y = -@player.y
   end
 end
 
@@ -84,8 +100,7 @@ end
 #
 class Player < Chingu::GameObject
   traits :sprite, :timer
-  attr_accessor :angular, :locked
-
+  attr_accessor :angular, :locked, :velocity_x, :velocity_y, :slowdown
 
   def initialize
     @angular = 0
@@ -96,8 +111,18 @@ class Player < Chingu::GameObject
     super(:image => "assets/player.png")
   end
 
+
   def lock!
     self.locked = true
+  end
+
+  def unlock!
+    self.locked = false
+  end
+
+  def scale_speed(amt)
+    @velocity_x = @velocity_x * amt
+    @velocity_y = @velocity_y * amt
   end
 
   def warp
@@ -108,9 +133,23 @@ class Player < Chingu::GameObject
       @speed_factor = 50
       @thruster = true
     end
+    after(5000) do
+      scale_speed(0.1)
+      new_state = Space.new
+      new_state.player.x = 150
+      new_state.player.y = 150
+      new_state.player.velocity_x = @velocity_x
+      new_state.player.velocity_y = @velocity_y
+      new_state.player.angle = angle
+      new_state.player.slowdown!
+      $window.switch_game_state(new_state)
+    end
   end
 
   def start_firing
+    unless $danger.playing?
+      $danger.play(true)
+    end
     unless locked
       fire
       every(150, :name => :fire) do
@@ -131,6 +170,15 @@ class Player < Chingu::GameObject
 
   def halt_fire
     stop_timer :fire
+  end
+
+  def slowdown!
+    lock!
+    @slowdown = true
+    after(500) do
+      @slowdown = false
+      unlock!
+    end
   end
 
   def turn_left
@@ -194,13 +242,21 @@ class Player < Chingu::GameObject
       @velocity_y -= (Math.cos(Angle.dtor(@angle)) / 10.0) * @speed_factor
     end
 
-    if @reverse
-      rad = Math::atan2(-@velocity_x, @velocity_y)
-      goal_angle = Angle.rtod(rad)
-      goal_angle += 360
-      goal_angle %= 360
+    if @slowdown
+      @velocity_x = 0.9 * @velocity_x
+      @velocity_y = 0.9 * @velocity_y
+    end
 
-      if angle_diff(@angle, goal_angle) < 1
+    if @reverse
+      # rad = Math::atan2(-@velocity_x, @velocity_y)
+      # goal_angle = Angle.rtod(rad)
+      # goal_angle += 360
+      # goal_angle %= 360
+      goal_angle = Angle.reverse_v(@velocity_x, @velocity_y)
+
+      if angle_diff(@angle, goal_angle).abs < 5
+        @angle = goal_angle
+      elsif angle_diff(@angle, goal_angle) < 0
         @angle += 5
       else
         @angle -= 5
@@ -217,7 +273,7 @@ class Laser < Chingu::GameObject
     angle %= 360
     @velocity_x = Math.sin(Angle.dtor(angle)) * 10.0
     @velocity_y = Math.cos(Angle.dtor(angle)) * 10.0
-    super(:image => "assets/laser.png", :zorder => 50)
+    super(:image => "assets/laser.png", :zorder => 150)
   end
 
   def update
@@ -236,7 +292,7 @@ end
 
 class Bg < Chingu::GameObject
   def initialize
-    super(:image => "assets/starfield.jpg", :zorder => 0)
+    super(:image => "assets/bg.png", :zorder => 0)
   end
 end
 
