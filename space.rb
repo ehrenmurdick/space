@@ -13,7 +13,7 @@ require './src/lib/angle'
 #
 class Game < Chingu::Window
   def initialize()
-    super(800,500,false)    
+    super(1024,768,false)    
   end
   
   def setup

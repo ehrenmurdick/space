@@ -8,7 +8,7 @@
 #
 class Player < Chingu::GameObject
   traits :sprite, :timer
-  attr_accessor :angular, :locked, :velocity_x, :velocity_y, :slowdown, :target
+  attr_accessor :angular, :locked, :velocity_x, :velocity_y, :target
 
   def initialize
     @angular = 0
@@ -33,6 +33,13 @@ class Player < Chingu::GameObject
   end
 
   def warp
+    $state.game_objects.select {|x| x.kind_of?(Planet)}.each do |obj|
+      dist = Gosu.distance(x, y, obj.x, obj.y) 
+      if dist < 2000
+        Gosu::Sound["negative.wav"].play
+        return
+      end
+    end
     Gosu::Sound["charge.wav"].play
     lock!
     after(2300) do
@@ -86,9 +93,9 @@ class Player < Chingu::GameObject
 
   def slowdown!
     lock!
-    @slowdown = true
+    @speed_factor = 0.5
     after(500) do
-      @slowdown = false
+      @speed_factor = 1
       unlock!
     end
   end

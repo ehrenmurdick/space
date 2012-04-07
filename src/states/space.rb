@@ -56,6 +56,7 @@ class Space < Chingu::GameState
     @player.start_firing if id == Gosu::Button::KbSpace
     @player.warp         if id == Gosu::Button::KbW
     @player.seek_target  if id == Gosu::Button::KbA
+    $danger.play(true)         if id == Gosu::Button::KbP
 
     exit if id == Gosu::Button::KbQ
   end
