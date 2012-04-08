@@ -203,6 +203,17 @@ class Player < Chingu::GameObject
     @x += @velocity_x
     @y += @velocity_y
 
+    if @x > 10_000
+      @x = 0
+    elsif @x < 0
+      @x = 10_000
+    end
+    if @y > 10_000
+      @y = 0
+    elsif @y < 0
+      @y = 10_000
+    end
+
       # :drift => 0, 
       # :thrust => 1, 
       # :drift_left => 2
