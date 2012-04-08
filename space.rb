@@ -17,7 +17,7 @@ class Game < Chingu::Window
   end
   
   def setup
-    switch_game_state(Space.new)
+    switch_game_state(Space.new("sol"))
   end    
 end
 

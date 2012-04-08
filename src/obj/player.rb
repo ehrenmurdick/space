@@ -8,15 +8,36 @@
 #
 class Player < Chingu::GameObject
   traits :sprite, :timer
-  attr_accessor :angular, :locked, :velocity_x, :velocity_y, :target
+  attr_accessor :angular, :locked, :velocity_x, :velocity_y, :target, :system
 
   def initialize
     @angular = 0
     @velocity_x, @velocity_y = 0, 0
     @rocket = Gosu::Sample.new("sounds/rocket.wav")
     @laser = Gosu::Sample.new("sounds/laser.wav")
+    @animation = Chingu::Animation.new(:file => "assets/ships/bluescout_32x32.png")
+    @animation.frame_names = { 
+      :drift => 0, 
+      :thrust => 1, 
+      :drift_left => 2,
+      :thrust_left => 3,
+      :thrust_right => 4,
+      :drift_right => 5}
+    @frame_name = "drift"
     @speed_factor = 1
-    super(:image => "assets/player.png")
+    super
+  end
+
+  def setup
+    @can_jump = false
+    every(500) do
+      if !@can_jump && can_jump?
+        @can_jump = true
+        Gosu::Sound["go.wav"].play
+      elsif !can_jump?
+        @can_jump = false
+      end
+    end
   end
 
   def lock!
@@ -32,14 +53,22 @@ class Player < Chingu::GameObject
     @velocity_y = @velocity_y * amt
   end
 
-  def warp
+  def can_jump?
     $state.game_objects.select {|x| x.kind_of?(Planet)}.each do |obj|
       dist = Gosu.distance(x, y, obj.x, obj.y) 
       if dist < 2000
-        Gosu::Sound["negative.wav"].play
-        return
+        return false
       end
     end
+    true
+  end
+
+  def warp
+    if !can_jump?
+      Gosu::Sound["negative.wav"].play
+      return
+    end
+
     Gosu::Sound["charge.wav"].play
     lock!
     after(1000) do
@@ -48,8 +77,15 @@ class Player < Chingu::GameObject
     end
     after(2300) do
       Gosu::Sound["jump.wav"].play
-      new_state = Space.new
-      new_state.player.x = 4000
+      if @system == "sol"
+        system = "procyon"
+      elsif @system == "procyon"
+        system = "kruger"
+      else
+        system = "sol"
+      end
+      new_state = Space.new(system)
+      new_state.player.x = 5000
       new_state.player.y = 5000
       new_state.player.velocity_x = @velocity_x
       new_state.player.velocity_y = @velocity_y
@@ -102,28 +138,30 @@ class Player < Chingu::GameObject
   def turn_left
     return if locked
     @angular = -1
-    @image = Gosu::Image["assets/player-l.png"]
   end
 
   def turn_right
     return if locked
     @angular = 1
-    @image = Gosu::Image["assets/player-r.png"]
   end    
 
   def halt_turn
     @angular = 0
-    @image = Gosu::Image["assets/player.png"]
   end
 
   def accelerate
     return if locked
     @thruster = true
     @r = @rocket.play
+    every(9000, :name => "engine") do
+      @r && @r.stop
+      @r = @rocket.play
+    end
   end
 
   def drift
     @thruster = false
+    stop_timer "engine"
     @r.stop
   end
 
@@ -139,10 +177,12 @@ class Player < Chingu::GameObject
 
   def halt_seek
     @seek = false
+    @angular = 0
   end
 
   def halt_reverse
     @reverse = false
+    @angular = 0
   end
 
   def image
@@ -162,7 +202,33 @@ class Player < Chingu::GameObject
     @angle %= 360
     @x += @velocity_x
     @y += @velocity_y
-    @image = image
+
+      # :drift => 0, 
+      # :thrust => 1, 
+      # :drift_left => 2
+      # :thrust_left => 3,
+      # :thrust_right => 4,
+      # :drift_right => 5}
+
+    frame_name = if @thruster
+      if @angular > 0
+        :thrust_right
+      elsif @angular < 0
+        :thrust_left
+      else
+        :thrust
+      end
+    else
+      if @angular > 0
+        :drift_right
+      elsif @angular < 0
+        :drift_left
+      else
+        :drift
+      end
+    end
+
+    @image = @animation[frame_name]
 
     if @thruster
       @velocity_x += (Math.sin(Angle.dtor(@angle)) / 10.0) * @speed_factor
@@ -188,10 +254,11 @@ class Player < Chingu::GameObject
   def turn_to(goal_angle)
     if angle_diff(@angle, goal_angle).abs < 5
       @angle = goal_angle
+      @angular = 0
     elsif angle_diff(@angle, goal_angle) < 0
-      @angle += 5
+      @angular = 1
     else
-      @angle -= 5
+      @angular = -1
     end
   end
 end

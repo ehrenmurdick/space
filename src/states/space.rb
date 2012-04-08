@@ -1,17 +1,15 @@
+require 'yaml'
 class Space < Chingu::GameState
   trait :viewport
   attr_accessor :player
   attr_reader :danger, :song
-  def initialize
-    super
+  def initialize(system)
+    super()
+    @system = YAML.load(File.read("data/systems.yml"))[system]
     $danger = Gosu::Song["assets/music/danger.wav"]
-    $song = 0
-    $songs = ["calm.wav", "planet2.wav"].map do |s|
-      Gosu::Song["assets/music/#{s}"]
-    end
-    srand
+    @song = Gosu::Song["assets/music/#{@system["music"]}"]
     $state = self
-    $songs[rand($songs.length)].play(true)
+    @song.play(true)
     #
     # Player will automatically be updated and drawn since it's a Chingu::GameObject
     # You'll need your own Chingu::Window#update and Chingu::Window#draw after a while, but just put #super there and Chingu can do its thing.
@@ -19,9 +17,15 @@ class Space < Chingu::GameState
 
     self.viewport.game_area = [0, 0, 10_000, 10_000] 
 
-    @planet = Planet.create
-    @planet.x = 5000
-    @planet.y = 5000
+    @planets = []
+    @system["planets"].each do |name, attrs|
+      p = Planet.create
+      p.image = Gosu::Image["assets/planets/#{attrs["image"]}"]
+      p.x = attrs["x"]
+      p.y = attrs["y"]
+      p.scale = attrs["scale"]
+      @planets << p
+    end
 
 
 
@@ -32,14 +36,18 @@ class Space < Chingu::GameState
     @player.zorder = 200
     $player = @player
 
+    @player.system = system
+
     @bg = Bg.create
 
     @asteroids = []
     rand(50).times do 
-      @asteroids << Asteroid.create
+      as = Asteroid.create
+      as.position_near(@planets.first.x, @planets.first.y)
+      @asteroids << as
     end
 
-    @player.target = @planet
+    @player.target = @planets.first
   end    
 
   def button_down(id)
@@ -67,7 +75,7 @@ class Space < Chingu::GameState
   def update
     super
     viewport.center_around(@player)
-    @bg.x = ((@player.x / 640.0).floor * 640) + (@player.x * 0.1) % 640
-    @bg.y = ((@player.y / 480.0).floor * 480) + (@player.y * 0.1) % 480
+    @bg.x = ((@player.x / 640.0).floor * 640) + (@player.x * 0.2) % 640
+    @bg.y = ((@player.y / 480.0).floor * 480) + (@player.y * 0.2) % 480
   end
 end

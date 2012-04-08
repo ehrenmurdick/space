@@ -1,0 +1,48 @@
+---
+sol:
+  music: "calm.wav"
+  planets:
+    earth:
+      image: "planet3.png"
+      x: 5000
+      y: 5000
+      scale: 1
+procyon:
+  music: "planet2.wav"
+  planets:
+    alpha:
+      image: "planet7.png"
+      x: 5500
+      y: 5300
+      scale: 0.5
+    beta:
+      image: "planet12.png"
+      x: 5000
+      y: 5000
+      scale: 3
+procyon:
+  music: "planet2.wav"
+  planets:
+    alpha:
+      image: "planet7.png"
+      x: 5500
+      y: 5300
+      scale: 0.5
+    beta:
+      image: "planet12.png"
+      x: 5000
+      y: 5000
+      scale: 3
+kruger:
+  music: "slow_low.wav"
+  planets:
+    alpha:
+      image: "planet1.png"
+      x: 4500
+      y: 5000
+      scale: 1.1
+    beta:
+      image: "planet4.png"
+      x: 5000
+      y: 4500
+      scale: 0.8
