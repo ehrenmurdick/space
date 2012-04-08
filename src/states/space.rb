@@ -19,9 +19,6 @@ class Space < Chingu::GameState
 
     self.viewport.game_area = [0, 0, 10_000, 10_000] 
 
-    @parallax = Chingu::Parallax.create(:x => 150, :y => 150)
-    @parallax << { :image => "assets/bg.png", :repeat_x => true, :repeat_y => true, :damping => 10, :x => 150, :y => 150}
-
     @planet = Planet.create
     @planet.x = 5000
     @planet.y = 5000
@@ -35,17 +32,14 @@ class Space < Chingu::GameState
     @player.zorder = 200
     $player = @player
 
+    @bg = Bg.create
+
     @asteroids = []
     rand(50).times do 
       @asteroids << Asteroid.create
     end
 
     @player.target = @planet
-
-
-    @parallax.x = @player.x
-    @parallax.y = @player.y
-
   end    
 
   def button_down(id)
@@ -73,7 +67,7 @@ class Space < Chingu::GameState
   def update
     super
     viewport.center_around(@player)
-    @parallax.x = @player.x
-    @parallax.y = @player.y
+    @bg.x = ((@player.x / 640.0).floor * 640) + (@player.x * 0.1) % 640
+    @bg.y = ((@player.y / 480.0).floor * 480) + (@player.y * 0.1) % 480
   end
 end

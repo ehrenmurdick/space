@@ -42,13 +42,12 @@ class Player < Chingu::GameObject
     end
     Gosu::Sound["charge.wav"].play
     lock!
-    after(2300) do
-      Gosu::Sound["jump.wav"].play
-      @speed_factor = 50
+    after(1000) do
+      @speed_factor = 25
       @thruster = true
     end
-    after(5000) do
-      scale_speed(0.1)
+    after(2300) do
+      Gosu::Sound["jump.wav"].play
       new_state = Space.new
       new_state.player.x = 4000
       new_state.player.y = 5000
