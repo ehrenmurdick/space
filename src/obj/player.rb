@@ -162,7 +162,7 @@ class Player < Chingu::GameObject
   def drift
     @thruster = false
     stop_timer "engine"
-    @r.stop
+    @r && @r.stop
   end
 
   def reverse
