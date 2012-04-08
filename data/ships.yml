@@ -1,0 +1,24 @@
+scout:
+  animation: "assets/ships/bluescout_32x32.png"
+  factor: 1
+  base_speed: 1
+  rotation: 1
+  frames:
+    :drift: 0
+    :thrust: 1
+    :drift_left: 2
+    :thrust_left: 3
+    :thrust_right: 4
+    :drift_right: 5
+valk:
+  animation: "assets/ships/valk_32x48.png"
+  factor: 1.5
+  base_speed: 0.8
+  rotation: 0.7
+  frames:
+    :drift: 0
+    :thrust: 1
+    :drift_left: 2
+    :thrust_left: 3
+    :thrust_right: 4
+    :drift_right: 5

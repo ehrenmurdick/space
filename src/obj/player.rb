@@ -8,27 +8,37 @@
 #
 class Player < Chingu::GameObject
   traits :sprite, :timer
+  Ships = YAML.load(File.read("data/ships.yml"))
   attr_accessor :angular, :locked, :velocity_x, :velocity_y, :target, :system
+  attr_reader :ship
 
   def initialize
     @angular = 0
     @velocity_x, @velocity_y = 0, 0
     @rocket = Gosu::Sample.new("sounds/rocket.wav")
     @laser = Gosu::Sample.new("sounds/laser.wav")
-    @animation = Chingu::Animation.new(:file => "assets/ships/bluescout_32x32.png")
-    @animation.frame_names = { 
-      :drift => 0, 
-      :thrust => 1, 
-      :drift_left => 2,
-      :thrust_left => 3,
-      :thrust_right => 4,
-      :drift_right => 5}
-    @frame_name = "drift"
-    @speed_factor = 1
+    self.ship = "scout"
     super
   end
 
+  def ship=(name)
+    @ship = name
+    @attrs = Ships[name]
+    @animation = Chingu::Animation.new(:file => @attrs["animation"]) 
+    @animation.frame_names = @attrs["frames"]
+    @frame_name = "drift"
+
+
+    @rotation = @attrs["rotation"]
+
+    @base_speed = @attrs["base_speed"]
+
+    @speed_factor = @base_speed
+    self.factor = @attrs["factor"]
+  end
+
   def setup
+    self.factor = @attrs["factor"]
     @can_jump = false
     every(500) do
       if !@can_jump && can_jump?
@@ -91,6 +101,7 @@ class Player < Chingu::GameObject
       new_state.player.velocity_y = @velocity_y
       new_state.player.angle = angle
       new_state.player.slowdown!
+      new_state.player.ship = ship
       $window.switch_game_state(new_state)
     end
   end
@@ -128,21 +139,21 @@ class Player < Chingu::GameObject
 
   def slowdown!
     lock!
-    @speed_factor = 0.5
+    @speed_factor = @base_speed / 2.0
     after(500) do
-      @speed_factor = 1
+      @speed_factor = @base_speed
       unlock!
     end
   end
 
   def turn_left
     return if locked
-    @angular = -1
+    @angular = -@rotation
   end
 
   def turn_right
     return if locked
-    @angular = 1
+    @angular = @rotation
   end    
 
   def halt_turn
@@ -183,14 +194,6 @@ class Player < Chingu::GameObject
   def halt_reverse
     @reverse = false
     @angular = 0
-  end
-
-  def image
-    str = ""
-    str += "-t1" if @thruster
-    str += "-l" if @angular < 0
-    str += "-r" if @angular > 0
-    Gosu::Image["assets/player#{str}.png"]
   end
 
   def angle_diff(a, b)
@@ -267,9 +270,9 @@ class Player < Chingu::GameObject
       @angle = goal_angle
       @angular = 0
     elsif angle_diff(@angle, goal_angle) < 0
-      @angular = 1
+      @angular = @rotation
     else
-      @angular = -1
+      @angular = -@rotation
     end
   end
 end
