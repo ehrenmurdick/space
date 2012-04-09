@@ -9,8 +9,8 @@
 class Player < Chingu::GameObject
   traits :sprite, :timer
   Ships = YAML.load(File.read("data/ships.yml"))
-  attr_accessor :angular, :locked, :velocity_x, :velocity_y, :target, :system
-  attr_reader :ship
+  attr_accessor :angular, :locked, :velocity_x, :velocity_y, :target, :system, :speed_factor, :thruster
+  attr_reader :ship, :warp_speed
 
   def initialize
     @angular = 0
@@ -30,6 +30,7 @@ class Player < Chingu::GameObject
 
 
     @rotation = @attrs["rotation"]
+    @warp_speed = @attrs["warp_speed"]
 
     @base_speed = @attrs["base_speed"]
 
@@ -81,27 +82,36 @@ class Player < Chingu::GameObject
 
     Gosu::Sound["charge.wav"].play
     lock!
+    @thruster = false
+    if @system == "sol"
+      system = "procyon"
+    elsif @system == "procyon"
+      system = "kruger"
+    else
+      system = "sol"
+    end
+    old_system = YAML.load(File.read("data/systems.yml"))[@system]
+    new_system = YAML.load(File.read("data/systems.yml"))[system]
+
+    @seek = true
+    @target = nil
+    @goal_angle = Angle.vtoa(old_system["x"] - new_system["x"], old_system["y"] - new_system["y"])
+
     after(1000) do
       @speed_factor = 25
       @thruster = true
     end
     after(2300) do
       Gosu::Sound["jump.wav"].play
-      if @system == "sol"
-        system = "procyon"
-      elsif @system == "procyon"
-        system = "kruger"
-      else
-        system = "sol"
-      end
-      new_state = Space.new(system)
+      new_state = Warp.new(@system, system)
       new_state.player.x = 5000
       new_state.player.y = 5000
       new_state.player.velocity_x = @velocity_x
       new_state.player.velocity_y = @velocity_y
       new_state.player.angle = angle
-      new_state.player.slowdown!
       new_state.player.ship = ship
+      new_state.player.speed_factor = 5
+      new_state.player.thruster = true
       $window.switch_game_state(new_state)
     end
   end
@@ -206,15 +216,15 @@ class Player < Chingu::GameObject
     @x += @velocity_x
     @y += @velocity_y
 
-    if @x > 10_000
-      @x = 0
-    elsif @x < 0
-      @x = 10_000
+    if @x > 10_000 - 640
+      @x = 640
+    elsif @x < 640
+      @x = 10_000 - 640
     end
-    if @y > 10_000
-      @y = 0
-    elsif @y < 0
-      @y = 10_000
+    if @y > 10_000 - 480
+      @y = 480
+    elsif @y < 480
+      @y = 10_000 - 480
     end
 
       # :drift => 0, 
@@ -262,6 +272,10 @@ class Player < Chingu::GameObject
     if @seek && @target
       goal_angle = Angle.vtoa(@target.x - x, @target.y - y)
       turn_to(goal_angle)
+    end
+
+    if @seek && @goal_angle
+      turn_to(@goal_angle)
     end
   end
 

@@ -1,5 +1,7 @@
 ---
 sol:
+  x: 0
+  y: 0
   music: "calm.wav"
   planets:
     earth:
@@ -8,7 +10,9 @@ sol:
       y: 5000
       scale: 1
 procyon:
-  music: "planet2.wav"
+  music: "slow_low.wav"
+  x: 0
+  y: 3000
   planets:
     alpha:
       image: "planet7.png"
@@ -22,6 +26,8 @@ procyon:
       scale: 3
 kruger:
   music: "slow_low.wav"
+  x: 5000
+  y: -3000
   planets:
     alpha:
       image: "planet1.png"

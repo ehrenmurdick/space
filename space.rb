@@ -5,6 +5,7 @@ require './src/obj/planet'
 require './src/obj/bg'
 require './src/obj/asteroid'
 require './src/states/space'
+require './src/states/warp'
 require './src/lib/angle'
 
 
