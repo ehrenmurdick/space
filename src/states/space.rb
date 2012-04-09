@@ -1,4 +1,5 @@
 require 'yaml'
+require './src/obj/npc'
 class Space < Chingu::GameState
   trait :viewport
   attr_accessor :player
@@ -25,6 +26,17 @@ class Space < Chingu::GameState
       p.y = attrs["y"]
       p.scale = attrs["scale"]
       @planets << p
+      next unless attrs["npcs"]
+      attrs["npcs"].each do |klass, n|
+        n.times do 
+          npc = Npc.create
+          npc.planet = p
+          npc.ship = klass
+          npc.x = p.x
+          npc.y = p.y
+          npc.zorder += 10
+        end
+      end
     end
 
 
@@ -58,8 +70,9 @@ class Space < Chingu::GameState
     @player.start_firing if id == Gosu::Button::KbSpace
     @player.warp         if id == Gosu::Button::KbW
     @player.seek_target  if id == Gosu::Button::KbA
-    @player.ship = "valk" if id == Gosu::Button::Kb1
-    @player.ship = "scout" if id == Gosu::Button::Kb2
+    @player.ship = "scout" if id == Gosu::Button::Kb1
+    @player.ship = "valk" if id == Gosu::Button::Kb2
+    @player.ship = "wraith" if id == Gosu::Button::Kb3
     $danger.play(true)         if id == Gosu::Button::KbP
 
     exit if id == Gosu::Button::KbQ

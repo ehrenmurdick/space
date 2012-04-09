@@ -22,3 +22,15 @@ valk:
     :thrust_left: 3
     :thrust_right: 4
     :drift_right: 5
+wraith:
+  animation: "assets/ships/wraith_48x32.png"
+  factor: 2
+  base_speed: 0.3
+  rotation: 0.7
+  frames:
+    :drift: 0
+    :thrust: 1
+    :drift_left: 0
+    :thrust_left: 1
+    :thrust_right: 1
+    :drift_right: 0
