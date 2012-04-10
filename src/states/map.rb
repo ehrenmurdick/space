@@ -60,8 +60,8 @@ class Map < Chingu::GameState
     end
     if target
       $target_system = target.first
+      $window.pop_game_state
     end
-    $window.pop_game_state
   end
 
   def revert

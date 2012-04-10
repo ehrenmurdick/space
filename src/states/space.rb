@@ -2,15 +2,17 @@ require 'yaml'
 require './src/obj/npc'
 class Space < Chingu::GameState
   trait :viewport
-  attr_accessor :player
+  attr_accessor :player, :draw_list
   attr_reader :danger, :song
   def initialize(system)
     super()
     @system = YAML.load(File.read("data/systems.yml"))[system]
+    @font = Gosu::Font.new($window, "verdana", 30)
     $danger = Gosu::Song["assets/music/danger.wav"]
     @song = Gosu::Song["assets/music/#{@system["music"]}"]
     $state = self
     @song.play(true)
+    @map_rect = Chingu::Rect.new($window.width - 200, 0, 200, 200)
     #
     # Player will automatically be updated and drawn since it's a Chingu::GameObject
     # You'll need your own Chingu::Window#update and Chingu::Window#draw after a while, but just put #super there and Chingu can do its thing.
@@ -53,7 +55,7 @@ class Space < Chingu::GameState
     @bg = Bg.create
 
     @asteroids = []
-    rand(50).times do 
+    rand(10).times do 
       as = Asteroid.create
       as.position_near(@planets.first.x, @planets.first.y)
       @asteroids << as
@@ -109,5 +111,26 @@ class Space < Chingu::GameState
     viewport.center_around(@player)
     @bg.x = ((@player.x / 640.0).floor * 640) + (@player.x * 0.2) % 640
     @bg.y = ((@player.y / 480.0).floor * 480) + (@player.y * 0.2) % 480
+  end
+
+  def draw
+    super
+    @font.draw(@player.system, 10, 10, 250, 2.0)
+    fill_rect(@map_rect, Gosu::Color::BLACK, 249)
+    draw_rect(@map_rect, Gosu::Color::WHITE, 250)
+    game_objects.each do |obj|
+      x = (obj.x / 100) * 2
+      y = (obj.y / 100) * 2
+      case obj
+      when Asteroid
+        draw_circle(@map_rect.x + x, @map_rect.y+y, 1, Gosu::Color::WHITE)
+      when Planet
+        draw_circle(@map_rect.x + x, @map_rect.y+y, obj.factor*2.5, Gosu::Color::BLUE)
+      when Player
+        draw_circle(@map_rect.x + x, @map_rect.y+y, 2, Gosu::Color::GREEN)
+      when Npc
+        draw_circle(@map_rect.x + x, @map_rect.y+y, 2, Gosu::Color::YELLOW)
+      end
+    end
   end
 end

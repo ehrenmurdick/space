@@ -9,8 +9,11 @@ sol:
       x: 5000
       y: 5000
       scale: 1
+      npcs:
+        scout: 2
+        valk: 1
 procyon:
-  music: "slow_low.wav"
+  music: "calm.wav"
   x: 1025
   y: 900
   planets:
@@ -43,8 +46,8 @@ kruger:
       scale: 0.8
       npcs:
         wraith: 1
-"proxima":
-  music: "slow_low.wav"
+proxima:
+  music: "blue.wav"
   x: 812
   y: 1032
   planets:
