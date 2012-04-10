@@ -1,7 +1,7 @@
 ---
 sol:
-  x: 0
-  y: 0
+  x: 1000
+  y: 1000
   music: "calm.wav"
   planets:
     earth:
@@ -11,8 +11,8 @@ sol:
       scale: 1
 procyon:
   music: "slow_low.wav"
-  x: 0
-  y: 3000
+  x: 1025
+  y: 900
   planets:
     alpha:
       image: "planet7.png"
@@ -26,8 +26,8 @@ procyon:
       scale: 3
 kruger:
   music: "slow_low.wav"
-  x: 5000
-  y: -3000
+  x: 1250
+  y: 1200
   planets:
     alpha:
       image: "planet1.png"
@@ -43,3 +43,13 @@ kruger:
       scale: 0.8
       npcs:
         wraith: 1
+"proxima":
+  music: "slow_low.wav"
+  x: 812
+  y: 1032
+  planets:
+    alpha:
+      image: "planet11.png"
+      x: 5000
+      y: 5000
+      scale: 1.3

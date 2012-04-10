@@ -59,21 +59,23 @@ class Space < Chingu::GameState
       @asteroids << as
     end
 
+
     @player.target = @planets.first
   end    
 
   def button_down(id)
-    @player.turn_left		 if id == Gosu::Button::KbLeft
-    @player.turn_right	 if id == Gosu::Button::KbRight
-    @player.accelerate   if id == Gosu::Button::KbUp
-    @player.reverse      if id == Gosu::Button::KbDown
-    @player.start_firing if id == Gosu::Button::KbSpace
-    @player.warp         if id == Gosu::Button::KbW
-    @player.seek_target  if id == Gosu::Button::KbA
-    @player.ship = "scout" if id == Gosu::Button::Kb1
-    @player.ship = "valk" if id == Gosu::Button::Kb2
+    map!                    if id == Gosu::Button::KbM
+    @player.turn_left       if id == Gosu::Button::KbLeft
+    @player.turn_right      if id == Gosu::Button::KbRight
+    @player.accelerate      if id == Gosu::Button::KbUp
+    @player.reverse         if id == Gosu::Button::KbDown
+    @player.start_firing    if id == Gosu::Button::KbSpace
+    @player.warp            if id == Gosu::Button::KbW
+    @player.seek_target     if id == Gosu::Button::KbA
+    @player.ship = "scout"  if id == Gosu::Button::Kb1
+    @player.ship = "valk"   if id == Gosu::Button::Kb2
     @player.ship = "wraith" if id == Gosu::Button::Kb3
-    $danger.play(true)         if id == Gosu::Button::KbP
+    $danger.play(true)      if id == Gosu::Button::KbP
 
     exit if id == Gosu::Button::KbQ
   end
@@ -85,6 +87,21 @@ class Space < Chingu::GameState
     @player.halt_reverse  if id == Gosu::Button::KbDown
     @player.halt_seek     if id == Gosu::Button::KbA
     @player.halt_fire     if id == Gosu::Button::KbSpace
+  end
+
+  def map!
+    map = Map.new(@system["x"], @system["y"])
+    $window.push_game_state(map)
+  end
+
+  def setup
+    $state = self
+    if $target_system
+      @player.target_system = $target_system
+      if @player.system != @player.target_system
+        @player.warp
+      end
+    end
   end
 
   def update

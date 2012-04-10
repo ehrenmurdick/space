@@ -32,9 +32,13 @@ class Warp < Chingu::GameState
     @bg.image = Gosu::Image["assets/warp.png"]
   end    
 
+  def button_down(id)
+    exit if id == Gosu::Button::KbQ
+  end
+
   def setup
     dist = Gosu.distance(@old_system["x"], @old_system["y"], @new_system["x"], @new_system["y"])
-    after(dist/@player.warp_speed) do
+    after((dist/@player.warp_speed)*50) do
       new_state = Space.new(@new_name)
       new_state.player.x = 640
       new_state.player.y = 480

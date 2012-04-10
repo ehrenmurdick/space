@@ -9,7 +9,7 @@
 class Player < Chingu::GameObject
   traits :sprite, :timer
   Ships = YAML.load(File.read("data/ships.yml"))
-  attr_accessor :angular, :locked, :velocity_x, :velocity_y, :target, :system, :speed_factor, :thruster
+  attr_accessor :angular, :locked, :velocity_x, :velocity_y, :target, :system, :speed_factor, :thruster, :target_system
   attr_reader :ship, :warp_speed
 
   def initialize
@@ -40,15 +40,6 @@ class Player < Chingu::GameObject
 
   def setup
     self.factor = @attrs["factor"]
-    @can_jump = false
-    every(500) do
-      if !@can_jump && can_jump?
-        @can_jump = true
-        Gosu::Sound["go.wav"].play
-      elsif !can_jump?
-        @can_jump = false
-      end
-    end
   end
 
   def lock!
@@ -64,38 +55,21 @@ class Player < Chingu::GameObject
     @velocity_y = @velocity_y * amt
   end
 
-  def can_jump?
-    $state.game_objects.select {|x| x.kind_of?(Planet)}.each do |obj|
-      dist = Gosu.distance(x, y, obj.x, obj.y) 
-      if dist < 2000
-        return false
-      end
-    end
-    true
-  end
-
   def warp
-    if !can_jump?
-      Gosu::Sound["negative.wav"].play
+    if @target_system == @system || @target_system.nil?
+      Gosu::Sound["negative.wav"]
       return
     end
-
     Gosu::Sound["charge.wav"].play
     lock!
     @thruster = false
-    if @system == "sol"
-      system = "procyon"
-    elsif @system == "procyon"
-      system = "kruger"
-    else
-      system = "sol"
-    end
+    system = @target_system
     old_system = YAML.load(File.read("data/systems.yml"))[@system]
     new_system = YAML.load(File.read("data/systems.yml"))[system]
 
     @seek = true
     @target = nil
-    @goal_angle = Angle.vtoa(old_system["x"] - new_system["x"], old_system["y"] - new_system["y"])
+    @goal_angle = Angle.vtoa(new_system["x"] - old_system["x"], new_system["y"] - old_system["y"])
 
     after(1000) do
       @speed_factor = 25

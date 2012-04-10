@@ -3,7 +3,7 @@ scout:
   factor: 1
   base_speed: 1
   rotation: 1
-  warp_speed: 0.5
+  warp_speed: 1
   frames:
     :drift: 0
     :thrust: 1
