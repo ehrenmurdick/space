@@ -46,6 +46,23 @@ kruger:
       scale: 0.8
       npcs:
         wraith: 1
+sigma:
+  music: "slow_low.wav"
+  x: 1123
+  y: 1067
+  planets:
+    alpha:
+      image: "planet2.png"
+      x: 2500
+      y: 2670
+      scale: 1.4
+    beta:
+      image: "planet5.png"
+      x: 6300
+      y: 5025
+      scale: 1.3
+      npcs:
+        wraith: 1
 proxima:
   music: "blue.wav"
   x: 812
