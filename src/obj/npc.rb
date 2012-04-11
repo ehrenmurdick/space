@@ -13,6 +13,10 @@ class Npc < Chingu::GameObject
     super
   end
 
+  def name
+    @ship
+  end
+
   def ship=(name)
     @ship = name
     @attrs = Ships[name]

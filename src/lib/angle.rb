@@ -1,5 +1,13 @@
 module Angle
   class << self
+
+    def rotate_v(angle, vx, vy)
+      angle = dtor(angle)
+      x = (vx * Math.cos(angle) - vy * Math.sin(angle))
+      y = (vx * Math.sin(angle) + vy * Math.cos(angle))
+      [x, y]
+    end
+
     def dtor(deg)
       deg * Math::PI / 180 
     end

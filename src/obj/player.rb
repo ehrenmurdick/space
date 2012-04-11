@@ -18,7 +18,10 @@ class Player < Chingu::GameObject
     @angular = 0
     @velocity_x, @velocity_y = 0, 0
     @rocket = Gosu::Sample.new("sounds/rocket.wav")
-    @laser = Gosu::Sample.new("sounds/laser.wav")
+    @weapons = [
+      Lasergun.new(self, -16, 10),
+      Lasergun.new(self, 16, 10)
+    ]
     self.ship = "scout"
     super
   end
@@ -113,12 +116,17 @@ class Player < Chingu::GameObject
 
   def fire
     return if locked
-    @laser.play
-    shot = Laser.create(angle, vx, vy)
-    shot.x = x
-    shot.y = y
-    shot.factor = 0.1
-    shot.angle = angle
+    @weapons.map {|x| x.fire}
+  end
+
+  def next_target
+    objs = $state.game_objects.select do |o|
+      [Planet, Npc].include?(o.class)
+    end
+    @target_idx ||= objs.index(@target)
+    @target_idx += 1
+    @target_idx %= objs.size
+    @target = objs[@target_idx]
   end
 
   def halt_fire

@@ -39,19 +39,19 @@ class Map < Chingu::GameState
   end
 
   def holding_left
-    @cursor.x -= 10
+    @cursor.x -= 5
   end
 
   def holding_right
-    @cursor.x += 10
+    @cursor.x += 5
   end
 
   def holding_down
-    @cursor.y += 10
+    @cursor.y += 5
   end
 
   def holding_up
-    @cursor.y -= 10
+    @cursor.y -= 5
   end
 
   def goto
