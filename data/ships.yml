@@ -6,6 +6,10 @@ scout:
   warp_speed: 1
   fuel: 200
   health: 100
+  weapons:
+    - type: Lasergun
+      x: 0
+      y: 5
   frames:
     :drift: 0
     :thrust: 1
@@ -21,6 +25,13 @@ valk:
   warp_speed: 1.5
   fuel: 400
   health: 200
+  weapons:
+    - type: Lasergun
+      x: 16
+      y: 10
+    - type: MissileLauncher
+      x: -16
+      y: 10
   frames:
     :drift: 0
     :thrust: 1
@@ -34,6 +45,10 @@ wraith:
   base_speed: 0.3
   rotation: 0.7
   health: 100
+  weapons:
+    - type: Lasergun
+      x: 0
+      y: 10
   frames:
     :drift: 0
     :thrust: 1

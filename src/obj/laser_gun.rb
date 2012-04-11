@@ -10,7 +10,6 @@ class Lasergun
     x, y = Angle.rotate_v(@player.angle, @x, @y)
     shot.x = @player.x + x
     shot.y = @player.y + y
-    shot.factor = 0.1
     shot.angle = @player.angle
   end
 

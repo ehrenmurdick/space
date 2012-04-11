@@ -12,9 +12,6 @@ class Npc < Chingu::GameObject
     @angular = 0
     @velocity_x, @velocity_y = 0, 0
     self.ship = "wraith"
-    @weapons = [
-      Lasergun.new(self, 0, 10)
-    ]
     super
   end
 

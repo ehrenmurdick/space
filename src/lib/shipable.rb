@@ -9,6 +9,12 @@ module Shipable
     @max_fuel = @attrs["fuel"]
     @fuel = @attrs["fuel"]
 
+    if @attrs["weapons"]
+      @weapons = @attrs["weapons"].map do |w|
+        eval(w["type"]).new(self, w["x"], w["y"])
+      end
+    end
+
     @health = @max_health = @attrs["health"]
 
 

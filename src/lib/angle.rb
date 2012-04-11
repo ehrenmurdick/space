@@ -8,6 +8,10 @@ module Angle
       [x, y]
     end
 
+    def diff(a, b)
+      ((((a - b) % 360) + 540) % 360) - 180
+    end
+
     def dtor(deg)
       deg * Math::PI / 180 
     end

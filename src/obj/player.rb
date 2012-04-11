@@ -19,10 +19,6 @@ class Player < Chingu::GameObject
     @angular = 0
     @velocity_x, @velocity_y = 0, 0
     @rocket = Gosu::Sample.new("sounds/rocket.wav")
-    @weapons = [
-      Lasergun.new(self, 0, 10),
-      Lasergun.new(self, 10, 10),
-    ]
     self.ship = "scout"
     super
   end
@@ -175,10 +171,6 @@ class Player < Chingu::GameObject
     @angular = 0
   end
 
-  def angle_diff(a, b)
-    ((((a - b) % 360) + 540) % 360) - 180
-  end
-
   def update
     @angle += (@angular * 5)
     @angle %= 360
@@ -249,10 +241,10 @@ class Player < Chingu::GameObject
   end
 
   def turn_to(goal_angle)
-    if angle_diff(@angle, goal_angle).abs < 5
+    if Angle.diff(@angle, goal_angle).abs < 5
       @angle = goal_angle
       @angular = 0
-    elsif angle_diff(@angle, goal_angle) < 0
+    elsif Angle.diff(@angle, goal_angle) < 0
       @angular = @rotation
     else
       @angular = -@rotation
