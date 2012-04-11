@@ -9,13 +9,22 @@ class Map < Chingu::GameState
   end    
 
   def setup
+    @bg = Bg.create
+    @bg.image = "assets/milkyway2.jpg"
+    @bg.factor = 1.7
+    @bg.x = 1200
+    @bg.y = 1000
+    @dist = Chingu::Text.create("", :x => @x, :y => @y + 10, :zorder => 55, :factor_x => 2.0)
+    @dist.color = Gosu::Color::RED
     @systems.each do |name, attrs|
       p = Planet.create
       p.factor = 0.1
       p.x = attrs["x"]
       p.y = attrs["y"]
-      p.image = "assets/planets/#{attrs["planets"].first[1]["image"]}"
+      p.image = "assets/star_#{attrs["color"]}.png"
+      p.factor = 0.5
       @text = Chingu::Text.create(name, :x => p.x, :y => p.y + 10, :zorder => 55, :factor_x => 2.0)
+      @text.color = Gosu::Color::RED
       @text.draw
     end
 
@@ -55,12 +64,18 @@ class Map < Chingu::GameState
   end
 
   def goto
+    if @ly > @player.fuel
+      Gosu::Sound["negative.wav"].play
+      return
+    end
     target = @systems.find do |h, k|
       Gosu.distance(k["x"], k["y"], @cursor.x, @cursor.y) < 50
     end
     if target
       $target_system = target.first
       $window.pop_game_state
+    else
+      Gosu::Sound["negative.wav"].play
     end
   end
 
@@ -75,5 +90,15 @@ class Map < Chingu::GameState
   def update
     super
     viewport.center_around(@cursor)
+    @dist.y = @cursor.y - 10
+    @dist.x = @cursor.x + 20
+    @ly = Gosu.distance(@x, @y, @cursor.x, @cursor.y)
+    @dist.text = @ly.round(2)
+  end
+
+  def draw
+    super
+    draw_circle(@x - viewport.x, @y - @viewport.y, @player.fuel, Gosu::Color::RED)
+    draw_circle(@x - viewport.x, @y - @viewport.y, @player.fuel/2, Gosu::Color::GREEN)
   end
 end

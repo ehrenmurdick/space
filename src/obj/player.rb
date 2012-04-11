@@ -11,7 +11,7 @@ class Player < Chingu::GameObject
   Ships = YAML.load(File.read("data/ships.yml"))
   attr_accessor :angular, :locked, :velocity_x, :velocity_y, 
       :target, :system, :speed_factor, :thruster, :target_system,
-      :fuel, :max_fuel
+      :fuel, :max_fuel, :health, :max_health
   attr_reader :ship, :warp_speed
 
   def initialize
@@ -34,6 +34,8 @@ class Player < Chingu::GameObject
     @frame_name = "drift"
     @max_fuel = @attrs["fuel"]
     @fuel = @attrs["fuel"]
+
+    @health = @max_health = @attrs["health"]
 
 
     @rotation = @attrs["rotation"]
@@ -93,6 +95,7 @@ class Player < Chingu::GameObject
       new_state.player.ship = ship
       new_state.player.speed_factor = 5
       new_state.player.thruster = true
+      new_state.player.fuel = fuel
       $window.switch_game_state(new_state)
     end
   end
@@ -123,7 +126,8 @@ class Player < Chingu::GameObject
     objs = $state.game_objects.select do |o|
       [Planet, Npc].include?(o.class)
     end
-    @target_idx ||= objs.index(@target)
+    return if objs.size == 0
+    @target_idx ||= objs.index(@target) || 0
     @target_idx += 1
     @target_idx %= objs.size
     @target = objs[@target_idx]

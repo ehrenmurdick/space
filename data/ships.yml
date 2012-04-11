@@ -4,7 +4,8 @@ scout:
   base_speed: 1
   rotation: 1
   warp_speed: 1
-  fuel: 500
+  fuel: 200
+  health: 200
   frames:
     :drift: 0
     :thrust: 1
@@ -18,7 +19,8 @@ valk:
   base_speed: 0.8
   rotation: 0.7
   warp_speed: 1.5
-  fuel: 3000
+  fuel: 400
+  health: 400
   frames:
     :drift: 0
     :thrust: 1
