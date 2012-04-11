@@ -8,10 +8,11 @@
 #
 class Player < Chingu::GameObject
   traits :sprite, :timer
-  Ships = YAML.load(File.read("data/ships.yml"))
+  include Shipable
+  include Killable
   attr_accessor :angular, :locked, :velocity_x, :velocity_y, 
       :target, :system, :speed_factor, :thruster, :target_system,
-      :fuel, :max_fuel, :health, :max_health
+      :fuel, :max_fuel
   attr_reader :ship, :warp_speed
 
   def initialize
@@ -19,32 +20,11 @@ class Player < Chingu::GameObject
     @velocity_x, @velocity_y = 0, 0
     @rocket = Gosu::Sample.new("sounds/rocket.wav")
     @weapons = [
-      Lasergun.new(self, -16, 10),
-      Lasergun.new(self, 16, 10)
+      Lasergun.new(self, 0, 10),
+      Lasergun.new(self, 10, 10),
     ]
     self.ship = "scout"
     super
-  end
-
-  def ship=(name)
-    @ship = name
-    @attrs = Ships[name]
-    @animation = Chingu::Animation.new(:file => @attrs["animation"]) 
-    @animation.frame_names = @attrs["frames"]
-    @frame_name = "drift"
-    @max_fuel = @attrs["fuel"]
-    @fuel = @attrs["fuel"]
-
-    @health = @max_health = @attrs["health"]
-
-
-    @rotation = @attrs["rotation"]
-    @warp_speed = @attrs["warp_speed"]
-
-    @base_speed = @attrs["base_speed"]
-
-    @speed_factor = @base_speed
-    self.factor = @attrs["factor"]
   end
 
   def setup
@@ -102,9 +82,11 @@ class Player < Chingu::GameObject
 
   def start_firing
     unless locked
-      fire
-      every(150, :name => :fire) do
-        fire
+      @weapons.each_with_index do |w, i|
+        w.fire
+        every(w.cycle, :name => "fire#{i}") do
+          w.fire
+        end
       end
     end
   end
@@ -115,11 +97,6 @@ class Player < Chingu::GameObject
 
   def vy
     @velocity_y
-  end
-
-  def fire
-    return if locked
-    @weapons.map {|x| x.fire}
   end
 
   def next_target
@@ -134,7 +111,9 @@ class Player < Chingu::GameObject
   end
 
   def halt_fire
-    stop_timer :fire
+    @weapons.each_with_index do |w, i|
+      stop_timer "fire#{i}"
+    end
   end
 
   def slowdown!

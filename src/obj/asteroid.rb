@@ -1,7 +1,8 @@
 require './src/obj/explosion'
 class Asteroid < Chingu::GameObject
-  traits :sprite, :collision_detection, :bounding_circle
-  attr_accessor :vx, :vy, :am, :health
+  include Killable
+  traits :sprite
+  attr_accessor :vx, :vy, :am
   def initialize
     super(:image => "assets/asteroid01.png")
   end
@@ -27,24 +28,5 @@ class Asteroid < Chingu::GameObject
     self.x += vx
     self.y += vy
     self.angle += am
-  end
-
-  def hit(power)
-    self.health -= power
-
-    if health < 0
-
-      @fireball_animation = Chingu::Animation.new(:file => "assets/explosion.png", :size => [64,64])
-      Chingu::Particle.create( :x => x, 
-                          :y => y, 
-                          :animation => @fireball_animation,
-                          :scale_rate => +0.05, 
-                          :fade_rate => -10, 
-                          :rotation_rate => 0,
-                          :mode => :default
-                        )
-      Gosu::Sound["asteroid_die.wav"].play(0.2)
-      destroy
-    end
   end
 end

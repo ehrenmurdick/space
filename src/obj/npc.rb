@@ -1,4 +1,6 @@
 class Npc < Chingu::GameObject
+  include Killable
+  include Shipable
   traits :sprite, :timer
   Ships = YAML.load(File.read("data/ships.yml"))
   attr_accessor :angular, :locked, :velocity_x, :velocity_y, :target, :system, :planet
@@ -10,27 +12,28 @@ class Npc < Chingu::GameObject
     @angular = 0
     @velocity_x, @velocity_y = 0, 0
     self.ship = "wraith"
+    @weapons = [
+      Lasergun.new(self, 0, 10)
+    ]
     super
+  end
+
+  def fire
+    @weapons.map {|x| x.fire}
   end
 
   def name
     @ship
   end
 
-  def ship=(name)
-    @ship = name
-    @attrs = Ships[name]
-    @animation = Chingu::Animation.new(:file => @attrs["animation"]) 
-    @animation.frame_names = @attrs["frames"]
-    @frame_name = "drift"
-
-
-    @rotation = @attrs["rotation"]
-
-    @base_speed = @attrs["base_speed"]
-
-    @speed_factor = @base_speed
-    self.factor = @attrs["factor"]
+  def aggro(target)
+    Gosu::Song["assets/music/danger.wav"].play(true)
+    return if @aggro
+    @aggro = true
+    @target = target
+    every(800) do
+      fire
+    end
   end
 
   def setup
@@ -43,6 +46,7 @@ class Npc < Chingu::GameObject
   end
 
   def new_target!
+    return if @aggro
     srand
     tx = (rand(2000) - 1000) + @planet.x
     ty = (rand(2000) - 1000) + @planet.y

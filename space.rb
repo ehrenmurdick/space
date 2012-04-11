@@ -1,4 +1,7 @@
 require 'chingu'
+require './src/lib/angle'
+require './src/lib/shipable'
+require './src/lib/killable'
 require './src/obj/player'
 require './src/obj/cursor'
 require './src/obj/laser'
@@ -9,7 +12,6 @@ require './src/obj/asteroid'
 require './src/states/space'
 require './src/states/warp'
 require './src/states/map'
-require './src/lib/angle'
 
 
 

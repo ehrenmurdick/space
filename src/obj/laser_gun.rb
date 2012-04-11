@@ -6,11 +6,15 @@ class Lasergun
 
   def fire
     @sound.play
-    shot = Laser.create(@player.angle, @player.vx, @player.vy)
+    shot = Laser.create(@player.angle, @player.vx, @player.vy, @player)
     x, y = Angle.rotate_v(@player.angle, @x, @y)
     shot.x = @player.x + x
     shot.y = @player.y + y
     shot.factor = 0.1
     shot.angle = @player.angle
+  end
+
+  def cycle
+    200
   end
 end

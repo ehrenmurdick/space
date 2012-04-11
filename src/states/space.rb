@@ -124,8 +124,8 @@ class Space < Chingu::GameState
 
   def draw
     super
-    @fuel_level.width = (@player.fuel / @player.max_fuel) * @fuel_rect.width
-    @health_level.width = (@player.health / @player.max_health) * @health_rect.width
+    @fuel_level.width = (@player.fuel / @player.max_fuel.to_f) * @fuel_rect.width
+    @health_level.width = (@player.health / @player.max_health.to_f) * @health_rect.width
 
 
     @font.draw(@player.system, 10, 10, 250, 2.0)

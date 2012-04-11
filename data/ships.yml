@@ -5,7 +5,7 @@ scout:
   rotation: 1
   warp_speed: 1
   fuel: 200
-  health: 200
+  health: 100
   frames:
     :drift: 0
     :thrust: 1
@@ -20,7 +20,7 @@ valk:
   rotation: 0.7
   warp_speed: 1.5
   fuel: 400
-  health: 400
+  health: 200
   frames:
     :drift: 0
     :thrust: 1
@@ -33,6 +33,7 @@ wraith:
   factor: 2
   base_speed: 0.3
   rotation: 0.7
+  health: 100
   frames:
     :drift: 0
     :thrust: 1
