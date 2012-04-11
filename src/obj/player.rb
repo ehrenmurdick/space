@@ -9,7 +9,9 @@
 class Player < Chingu::GameObject
   traits :sprite, :timer
   Ships = YAML.load(File.read("data/ships.yml"))
-  attr_accessor :angular, :locked, :velocity_x, :velocity_y, :target, :system, :speed_factor, :thruster, :target_system
+  attr_accessor :angular, :locked, :velocity_x, :velocity_y, 
+      :target, :system, :speed_factor, :thruster, :target_system,
+      :fuel, :max_fuel
   attr_reader :ship, :warp_speed
 
   def initialize
@@ -27,6 +29,8 @@ class Player < Chingu::GameObject
     @animation = Chingu::Animation.new(:file => @attrs["animation"]) 
     @animation.frame_names = @attrs["frames"]
     @frame_name = "drift"
+    @max_fuel = @attrs["fuel"]
+    @fuel = @attrs["fuel"]
 
 
     @rotation = @attrs["rotation"]

@@ -1,7 +1,7 @@
 require 'yaml'
 class Map < Chingu::GameState
   traits :viewport, :timer
-  attr_accessor :cursor, :target
+  attr_accessor :cursor, :target, :player
   def initialize(x, y)
     @x, @y = x, y
     super()

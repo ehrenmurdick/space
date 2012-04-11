@@ -13,6 +13,8 @@ class Space < Chingu::GameState
     $state = self
     @song.play(true)
     @map_rect = Chingu::Rect.new($window.width - 200, 0, 200, 200)
+    @fuel_rect = Chingu::Rect.new($window.width - 200, 210, 200, 10)
+    @fuel_level = Chingu::Rect.new(@fuel_rect)
     #
     # Player will automatically be updated and drawn since it's a Chingu::GameObject
     # You'll need your own Chingu::Window#update and Chingu::Window#draw after a while, but just put #super there and Chingu can do its thing.
@@ -93,6 +95,7 @@ class Space < Chingu::GameState
 
   def map!
     map = Map.new(@system["x"], @system["y"])
+    map.player = @player
     $window.push_game_state(map)
   end
 
@@ -115,9 +118,14 @@ class Space < Chingu::GameState
 
   def draw
     super
+    @fuel_level.width = (@player.fuel / @player.max_fuel) * 200
+
+
     @font.draw(@player.system, 10, 10, 250, 2.0)
     fill_rect(@map_rect, Gosu::Color::BLACK, 249)
     draw_rect(@map_rect, Gosu::Color::WHITE, 250)
+    fill_rect(@fuel_level, Gosu::Color::GRAY, 250)
+    draw_rect(@fuel_rect, Gosu::Color::WHITE, 250)
     game_objects.each do |obj|
       x = (obj.x / 100) * 2
       y = (obj.y / 100) * 2

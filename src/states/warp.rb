@@ -47,6 +47,7 @@ class Warp < Chingu::GameState
       new_state.player.angle = @player.angle
       new_state.player.ship = @player.ship
       new_state.player.thruster = false
+      new_state.player.fuel = @player.fuel - dist
       $window.switch_game_state(new_state)
     end
   end
