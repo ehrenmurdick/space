@@ -16,7 +16,7 @@ class Laser < Chingu::GameObject
   end
 
   def setup
-    after(5000) do
+    after(1000) do
       destroy
     end
   end

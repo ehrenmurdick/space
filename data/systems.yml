@@ -13,6 +13,7 @@ sol:
       npcs:
         scout: 2
         valk: 1
+        destroyer: 1
 procyon:
   color: yellow
   music: "calm.wav"

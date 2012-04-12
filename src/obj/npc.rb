@@ -15,10 +15,6 @@ class Npc < Chingu::GameObject
     super
   end
 
-  def fire
-    @weapons.map {|x| x.fire}
-  end
-
   def name
     @ship
   end
@@ -28,8 +24,10 @@ class Npc < Chingu::GameObject
     return if @aggro
     @aggro = true
     @target = target
-    every(800) do
-      fire
+    @weapons.each do |w|
+      every(w.cycle) do
+        w.fire
+      end
     end
   end
 
@@ -89,6 +87,10 @@ class Npc < Chingu::GameObject
   end
 
   def update
+    if @target.respond_to?(:health) && @target.health < 0
+      @aggro = false
+    end
+    
     @angle += (@angular * 5)
     @angle %= 360
     @x += @velocity_x

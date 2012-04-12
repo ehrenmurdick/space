@@ -39,6 +39,40 @@ valk:
     :thrust_left: 3
     :thrust_right: 4
     :drift_right: 5
+destroyer:
+  animation: "assets/ships/valk_32x48.png"
+  factor: 3
+  base_speed: 0.5
+  rotation: 0.2
+  warp_speed: 2
+  fuel: 600
+  health: 2000
+  weapons:
+    - type: LaserTurret
+      x: 32
+      y: 40
+    - type: LaserTurret
+      x: -32
+      y: 40
+    - type: MissileLauncher
+      x: 32
+      y: 40
+    - type: MissileLauncher
+      x: -32
+      y: 40
+    - type: LaserTurret
+      x: 10
+      y: -65
+    - type: LaserTurret
+      x: -10
+      y: -65
+  frames:
+    :drift: 0
+    :thrust: 1
+    :drift_left: 2
+    :thrust_left: 3
+    :thrust_right: 4
+    :drift_right: 5
 wraith:
   animation: "assets/ships/wraith_48x32.png"
   factor: 2
