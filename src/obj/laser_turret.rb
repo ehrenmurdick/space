@@ -15,7 +15,7 @@ class LaserTurret
 
       @sound.play
 
-      lead = range / 12.0
+      lead = range / 11.0
 
       goal_angle = Angle.vtoa((target.velocity_x * lead) + target.x - tx, 
                               (target.velocity_y * lead) + target.y - ty)

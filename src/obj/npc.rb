@@ -82,10 +82,6 @@ class Npc < Chingu::GameObject
     end
   end
 
-  def angle_diff(a, b)
-    ((((a - b) % 360) + 540) % 360) - 180
-  end
-
   def update
     if @target.respond_to?(:health) && @target.health < 0
       @aggro = false
@@ -131,10 +127,9 @@ class Npc < Chingu::GameObject
 
     @image = @animation[frame_name]
 
-    if @thruster
-      @velocity_x += (Math.sin(Angle.dtor(@angle)) / 10.0) * @speed_factor
-      @velocity_y -= (Math.cos(Angle.dtor(@angle)) / 10.0) * @speed_factor
-    end
+    a, b = accel_vector
+    @velocity_x += a
+    @velocity_y -= b
 
     if Angle.mag(@velocity_x, @velocity_y) > 10 * @speed_factor
       @velocity_x = 0.9 * @velocity_x
@@ -148,17 +143,6 @@ class Npc < Chingu::GameObject
       if Gosu.distance(@target.x, @target.y, x, y) < 500
         new_target!
       end
-    end
-  end
-
-  def turn_to(goal_angle)
-    if angle_diff(@angle, goal_angle).abs < 5
-      @angle = goal_angle
-      @angular = 0
-    elsif angle_diff(@angle, goal_angle) < 0
-      @angular = @rotation
-    else
-      @angular = -@rotation
     end
   end
 end

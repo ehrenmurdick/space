@@ -8,6 +8,7 @@ class Missile < Chingu::GameObject
     @target = target
     @shooter = shooter
     @angular = 0
+    @lock_arc = 90
     @rotation = 2
     @speed = 0.8
     angle -= 90
@@ -33,6 +34,9 @@ class Missile < Chingu::GameObject
     lead = range / (1/0.08)
 
     goal_angle = Angle.vtoa(@target.x + (@target.velocity_x*lead) - x, @target.y - (@target.velocity_y*lead) - y)
+    if Angle.diff(@angle, goal_angle).abs > @lock_arc
+      goal_angle = @angle
+    end
     turn_to(goal_angle)
 
     $state.game_objects.each do |obj|

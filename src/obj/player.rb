@@ -207,10 +207,9 @@ class Player < Chingu::GameObject
 
     @image = @animation[frame_name]
 
-    if @thruster
-      @velocity_x += (Math.sin(Angle.dtor(@angle)) / 10.0) * @speed_factor
-      @velocity_y -= (Math.cos(Angle.dtor(@angle)) / 10.0) * @speed_factor
-    end
+    a, b = accel_vector
+    @velocity_x += a
+    @velocity_y -= b
 
     if Angle.mag(@velocity_x, @velocity_y) > 10 * @speed_factor
       @velocity_x = 0.9 * @velocity_x
@@ -229,17 +228,6 @@ class Player < Chingu::GameObject
 
     if @seek && @goal_angle
       turn_to(@goal_angle)
-    end
-  end
-
-  def turn_to(goal_angle)
-    if Angle.diff(@angle, goal_angle).abs < 5
-      @angle = goal_angle
-      @angular = 0
-    elsif Angle.diff(@angle, goal_angle) < 0
-      @angular = @rotation
-    else
-      @angular = -@rotation
     end
   end
 end

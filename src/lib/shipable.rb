@@ -26,4 +26,24 @@ module Shipable
     @speed_factor = @base_speed
     self.factor = @attrs["factor"]
   end
+
+  def accel_vector
+    if @thruster
+      [(Math.sin(Angle.dtor(@angle)) / 10.0) * @speed_factor,
+      (Math.cos(Angle.dtor(@angle)) / 10.0) * @speed_factor]
+    else
+      [0, 0]
+    end
+  end
+
+  def turn_to(goal_angle)
+    if Angle.diff(@angle, goal_angle).abs < 5
+      @angle = goal_angle
+      @angular = 0
+    elsif Angle.diff(@angle, goal_angle) < 0
+      @angular = @rotation
+    else
+      @angular = -@rotation
+    end
+  end
 end
