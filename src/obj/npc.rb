@@ -24,8 +24,8 @@ class Npc < Chingu::GameObject
     return if @aggro
     @aggro = true
     @target = target
-    @weapons.each do |w|
-      every(w.cycle) do
+    @weapons.each_with_index do |w, i|
+      every(w.cycle, :name => "fire#{i}") do
         w.fire
       end
     end
@@ -89,6 +89,10 @@ class Npc < Chingu::GameObject
   def update
     if @target.respond_to?(:health) && @target.health < 0
       @aggro = false
+      @weapons.each_with_index do |w, i|
+        stop_timer "fire#{i}"
+      end
+      new_target!
     end
     
     @angle += (@angular * 5)

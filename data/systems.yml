@@ -11,9 +11,7 @@ sol:
       y: 5000
       scale: 1
       npcs:
-        scout: 2
-        valk: 1
-        destroyer: 1
+        valk: 2
 procyon:
   color: yellow
   music: "calm.wav"

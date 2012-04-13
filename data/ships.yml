@@ -26,7 +26,7 @@ valk:
   fuel: 400
   health: 200
   weapons:
-    - type: Lasergun
+    - type: MissileLauncher
       x: 16
       y: 10
     - type: MissileLauncher
@@ -52,12 +52,6 @@ destroyer:
       x: 32
       y: 40
     - type: LaserTurret
-      x: -32
-      y: 40
-    - type: MissileLauncher
-      x: 32
-      y: 40
-    - type: MissileLauncher
       x: -32
       y: 40
     - type: LaserTurret

@@ -27,6 +27,8 @@ module Angle
     def vtoa(vx, vy)
       rad = Math::atan2(-vx, vy)
       (rtod(rad) + 180) % 360
+    rescue Math::DomainError
+      0
     end
 
     def reverse_v(vx, vy)

@@ -8,7 +8,7 @@ class Missile < Chingu::GameObject
     @target = target
     @shooter = shooter
     @angular = 0
-    @rotation = 1
+    @rotation = 2
     @speed = 0.8
     angle -= 90
     angle %= 360
@@ -29,7 +29,10 @@ class Missile < Chingu::GameObject
     @x += (Math.sin(Angle.dtor(@angle)) / @speed)
     @y -= (Math.cos(Angle.dtor(@angle)) / @speed)
 
-    goal_angle = Angle.vtoa(@target.x + @target.velocity_x - x, @target.y - @target.velocity_y - y)
+    range = Gosu.distance(@x, @y, @target.x, @target.y)
+    lead = range / (1/0.08)
+
+    goal_angle = Angle.vtoa(@target.x + (@target.velocity_x*lead) - x, @target.y - (@target.velocity_y*lead) - y)
     turn_to(goal_angle)
 
     $state.game_objects.each do |obj|

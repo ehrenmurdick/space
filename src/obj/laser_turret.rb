@@ -6,14 +6,16 @@ class LaserTurret
 
   def fire
     target = @player.target
-    return unless [Npc, Player].include? target.class
-    @sound.play
     x, y = Angle.rotate_v(@player.angle, @x, @y)
-
     tx = @player.x + x
     ty = @player.y + y
+    range = Gosu.distance(tx, ty, target.x, target.y)
 
-    lead = Gosu.distance(tx, ty, target.x, target.y) / 12.0
+    return unless range < 500
+    return unless [Npc, Player].include? target.class
+    @sound.play
+
+    lead = range / 12.0
 
     goal_angle = Angle.vtoa((target.velocity_x * lead) + target.x - tx, 
                             (target.velocity_y * lead) + target.y - ty)

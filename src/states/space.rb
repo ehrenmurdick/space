@@ -19,6 +19,9 @@ class Space < Chingu::GameState
     @health_rect = Chingu::Rect.new(@map_rect.x, @fuel_rect.y+@fuel_rect.height+10, 200, 10)
     @health_level = Chingu::Rect.new(@health_rect)
 
+    @target_health_rect = Chingu::Rect.new(@map_rect.x, @health_rect.y+@health_rect.height+10, 200, 10)
+    @target_health = Chingu::Rect.new(@target_health_rect)
+
     #
     # Player will automatically be updated and drawn since it's a Chingu::GameObject
     # You'll need your own Chingu::Window#update and Chingu::Window#draw after a while, but just put #super there and Chingu can do its thing.
@@ -130,7 +133,7 @@ class Space < Chingu::GameState
 
     @font.draw(@player.system, 10, 10, 250, 2.0)
     if @player.target
-      @font.draw(@player.target.name, @map_rect.x, @fuel_rect.y + 25, 250, 0.7)
+      @font.draw(@player.target.name, @map_rect.x, @health_rect.y + 25, 250, 0.7)
       dist = Gosu.distance(@player.x, @player.y, @player.target.x, @player.target.y)
       if dist > 1000
         dist = (dist / 100.0).floor / 10.0
@@ -140,17 +143,17 @@ class Space < Chingu::GameState
         dist = dist.to_s + "Mm"
       end
       @font.draw(dist,
-        @map_rect.x + 150, @fuel_rect.y + 25, 250, 0.5)
+        @map_rect.x + 150, @health_rect.y + 25, 250, 0.5)
 
       if Planet === @player.target
         width = @player.target.image.width
         height = @player.target.image.height
         fac = 1 / (width / 200.0)
         fac *= @player.target.factor / 3.0
-        @player.target.image.draw(@map_rect.x, @fuel_rect.y + 60 - fac * 60, 250, fac, fac)
+        @player.target.image.draw(@map_rect.x, @health_rect.y + 60 - fac * 60, 250, fac, fac)
       else
         fac = 1
-        @player.target.image.draw(@map_rect.x, @fuel_rect.y + 60, 250, fac, fac)
+        @player.target.image.draw(@map_rect.x, @health_rect.y + 60, 250, fac, fac)
       end
     end
 
@@ -158,8 +161,15 @@ class Space < Chingu::GameState
     draw_rect(@map_rect, Gosu::Color::WHITE, 250)
     fill_rect(@fuel_level, Gosu::Color::GRAY, 250)
     draw_rect(@fuel_rect, Gosu::Color::WHITE, 250)
-    fill_rect(@health_level, Gosu::Color::RED, 250)
+    fill_rect(@health_level, Gosu::Color::BLUE, 250)
     draw_rect(@health_rect, Gosu::Color::WHITE, 250)
+
+    if @player.target.respond_to?(:health)
+      @target_health.width = (@player.target.health / @player.target.max_health.to_f) * @target_health_rect.width
+      fill_rect(@target_health, Gosu::Color::RED, 250)
+      draw_rect(@target_health_rect, Gosu::Color::WHITE, 250)
+    end
+
     game_objects.each do |obj|
       x = @map_rect.x + (obj.x / 100) * 2
       y = @map_rect.y + (obj.y / 100) * 2
