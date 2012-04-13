@@ -1,6 +1,5 @@
 module Angle
   class << self
-
     def rotate_v(angle, vx, vy)
       angle = dtor(angle)
       x = (vx * Math.cos(angle) - vy * Math.sin(angle))
