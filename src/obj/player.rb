@@ -15,22 +15,6 @@ class Player < Chingu::GameObject
     super
   end
 
-  def dock
-    dock = $state.game_objects.select do |o|
-      Dock === o
-    end.first
-
-    if dock
-      if Gosu.distance(@x, @y, dock.x, dock.y) < 100
-        @health = @max_health
-        @fuel = @max_fuel
-        Gosu::Sound["success.wav"].play
-      else
-        Gosu::Sample.new("sounds/negative.wav").play
-      end
-    end
-  end
-
   def setup
     self.factor = @attrs["factor"]
   end
@@ -49,16 +33,24 @@ class Player < Chingu::GameObject
   end
 
   def land
-    planet = $state.game_objects.select do |o|
-      Planet === o
-    end.first
-    if planet.nil? || Gosu.distance(@x, @y, planet.x, planet.y) > 100
-      Gosu::Sound["negative.wav"].play
+    unless Gosu.distance(@x, @y, @target.x, @target.y) < 100
+      Gosu::Sample.new("sounds/negative.wav").play
       return
     end
-    new_state = Land.new(planet)
-    new_state.player.ship = @ship
-    $window.push_game_state(new_state)
+
+    case @target
+    when Dock
+      @health = @max_health
+      @fuel = @max_fuel
+      Gosu::Sound["success.wav"].play
+    when Planet
+      new_state = Land.new(@target)
+      new_state.player.ship = @ship
+      new_state.player.angle = angle
+      $window.push_game_state(new_state)
+    else
+      Gosu::Sample.new("sounds/negative.wav").play
+    end
   end
 
   def warp

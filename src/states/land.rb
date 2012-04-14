@@ -4,12 +4,13 @@ class Land < Chingu::GameState
   def initialize(planet)
     super()
     @bg = Bg.create
-    @bg.scale = 10
-    @bg.y = 2500
-    @bg.y = 2500
-    @bg.image = Gosu::Image["assets/planets/surface.jpg"]
-    self.viewport.game_area = [0, 0, 5000, 5000] 
+    @bg.scale = 3
+    @bg.y = 1000
+    @bg.y = 1000
+    @bg.image = Gosu::Image[planet.surface]
+    self.viewport.game_area = [0, 0, 2000, 2000] 
     @player = Lander.create
+    @player.x, @player.y = 1000, 1000
   end
 
   def setup
