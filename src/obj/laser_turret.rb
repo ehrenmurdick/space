@@ -4,7 +4,12 @@ class LaserTurret
     @player, @x, @y = player, x, y
     @sound = Gosu::Sample.new("sounds/laser.wav")
     @arc = 180
-    @armed = true
+    @armed = 1
+  end
+
+  def arm!
+    @armed += 1
+    @armed %= 3
   end
 
   def fire_if_range range
@@ -12,8 +17,15 @@ class LaserTurret
   end
 
   def fire
-    return unless armed
     target = @player.target
+    case armed
+    when 0
+      return
+    when 2
+      return if target.nil?
+      range = Gosu.distance(@player.x, @player.y, target.x, target.y)
+      return if range > 600
+    end
     if [Npc, Player].include? target.class
       x, y = Angle.rotate_v(@player.angle, @x, @y)
       tx = @player.x + x

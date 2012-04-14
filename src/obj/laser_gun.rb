@@ -4,6 +4,6 @@ class Lasergun < LaserTurret
     @player, @x, @y = player, x, y
     @arc = 15
     @sound = Gosu::Sample.new("sounds/laser.wav")
-    @armed = true
+    @armed = 1
   end
 end

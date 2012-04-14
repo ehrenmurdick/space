@@ -30,14 +30,16 @@ class Missile < Chingu::GameObject
     @x += (Math.sin(Angle.dtor(@angle)) / @speed)
     @y -= (Math.cos(Angle.dtor(@angle)) / @speed)
 
-    range = Gosu.distance(@x, @y, @target.x, @target.y)
-    lead = range / (1/0.08)
+    if [Npc, Player].include?(@target.class)
+      range = Gosu.distance(@x, @y, @target.x, @target.y)
+      lead = range / (1/0.08)
 
-    goal_angle = Angle.vtoa(@target.x + (@target.velocity_x*lead) - x, @target.y - (@target.velocity_y*lead) - y)
-    if Angle.diff(@angle, goal_angle).abs > @lock_arc
-      goal_angle = @angle
+      goal_angle = Angle.vtoa(@target.x + (@target.velocity_x*lead) - x, @target.y - (@target.velocity_y*lead) - y)
+      if Angle.diff(@angle, goal_angle).abs > @lock_arc
+        goal_angle = @angle
+      end
+      turn_to(goal_angle)
     end
-    turn_to(goal_angle)
 
     $state.game_objects.each do |obj|
       case obj

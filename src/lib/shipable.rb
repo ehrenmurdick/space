@@ -29,7 +29,7 @@ module Shipable
 
   def arm(idx)
     return unless w = @weapons[idx]
-    w.armed = !w.armed
+    w.arm!
   end
 
   def accel_vector

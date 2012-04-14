@@ -216,7 +216,7 @@ class Space < Chingu::GameState
     draw_rect(@health_rect, Gosu::Color::WHITE, 250)
 
     @player.weapons.each_with_index do |w, i|
-      @font.draw("[#{w.armed ? 'x' : '  '}] #{w.class}",
+      @font.draw("[#{['  ', 'x', 'o'][w.armed]}] #{w.class}",
         @target_health_rect.x, @target_health_rect.y + (i+1)*20 + 200, 250, 0.5)
     end
 
@@ -228,7 +228,7 @@ class Space < Chingu::GameState
 
     @msgs.each_with_index do |msg, i|
       @font.draw(msg,
-        200, (15*i) + 10, 250, 1.2, 0.75, Gosu::Color::WHITE)
+        10, (15*i) + 40, 250, 1.2, 0.75, Gosu::Color::WHITE)
     end
 
 

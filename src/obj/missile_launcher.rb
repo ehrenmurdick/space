@@ -3,7 +3,12 @@ class MissileLauncher
   def initialize(player, x, y)
     @player, @x, @y = player, x, y
     @sound = Gosu::Sample.new("sounds/missile.wav")
-    @armed = true
+    @armed = 1
+  end
+
+  def arm!
+    @armed += 1
+    @armed %= 3
   end
 
   def fire_if_range(range)
@@ -11,8 +16,15 @@ class MissileLauncher
   end
 
   def fire
-    return unless armed
-    return unless [Npc, Player].include? @player.target.class
+    target = @player.target
+    case armed
+    when 0
+      return
+    when 2
+      return unless [Npc, Player].include? @player.target.class
+      range = Gosu.distance(@player.x, @player.y, target.x, target.y)
+      return unless range < 1500 && range > 300
+    end
     @sound.play(0.2)
     shot = Missile.create(@player.angle, @player.vx, @player.vy, @player, @player.target)
     x, y = Angle.rotate_v(@player.angle, @x, @y)
