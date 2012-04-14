@@ -7,7 +7,7 @@ class Land < Chingu::GameState
     @bg.scale = 3
     @bg.y = 1000
     @bg.y = 1000
-    @bg.image = Gosu::Image[planet.surface]
+    @bg.image = planet.surface
     self.viewport.game_area = [0, 0, 2000, 2000] 
     @player = Lander.create
     @player.x, @player.y = 1000, 1000

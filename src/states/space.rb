@@ -55,7 +55,7 @@ class Space < Chingu::GameState
       else
         p = Planet.create
         p.image = Gosu::Image["assets/planets/#{attrs["image"]}"]
-        p.surface = "assets/planets/#{attrs["surface"]}"
+        p.surface = attrs["surface"]
         p.name = name
       end
       p.x = attrs["x"]
