@@ -36,6 +36,7 @@ class Player < Chingu::GameObject
   def land
     unless Gosu.distance(@x, @y, @target.x, @target.y) < 100
       @neg.play
+      $state.msg "too far"
       return
     end
 
@@ -44,10 +45,11 @@ class Player < Chingu::GameObject
       @health = @max_health
       @fuel = @max_fuel
       Gosu::Sound["success.wav"].play
+      $state.msg "refuled and repaired"
     when Planet
       unless @target.surface
         @neg.play
-        $state.warn "it's unsafe to land here"
+        $state.msg "it's unsafe to land here"
         return
       end
       new_state = Land.new(@target)

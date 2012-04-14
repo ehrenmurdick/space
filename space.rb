@@ -29,7 +29,7 @@ class Game < Chingu::Window
   end
   
   def setup
-    switch_game_state(Space.new("sol"))
+    switch_game_state(Space.new("vega"))
   end    
 end
 

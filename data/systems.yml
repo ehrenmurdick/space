@@ -1,11 +1,11 @@
 ---
-sol:
+vega:
   color: yellow
   x: 400
   y: 1800
   music: "calm.wav"
   planets:
-    earth:
+    outset:
       image: "planet3.png"
       surface: "surface3.jpg"
       x: 5000

@@ -15,15 +15,17 @@ class Space < Chingu::GameState
     Gosu::Button::Kb7
   ]
 
-  def warn(msg)
-    @warning = msg
-    after(1000) do
-      @warning = nil
+
+  def msg(msg)
+    @msgs << msg
+    after(2000) do
+      @msgs.shift
     end
   end
 
   def initialize(system)
     super()
+    @msgs = []
     @system = YAML.load(File.read("data/systems.yml"))[system]
     @font = Gosu::Font.new($window, "verdana", 30)
     $danger = Gosu::Song["assets/music/danger.wav"]
@@ -193,7 +195,11 @@ class Space < Chingu::GameState
       if Planet === @player.target
         width = @player.target.image.width
         height = @player.target.image.height
-        fac = 1 / (width / 200.0)
+        if Dock === @player.target
+          fac = 2
+        else
+          fac = 1 / (width / 200.0)
+        end
         fac *= @player.target.factor / 3.0
         @player.target.image.draw(@map_rect.x, @health_rect.y + 60 - fac * 60, 250, fac, fac)
       else
@@ -220,9 +226,9 @@ class Space < Chingu::GameState
       draw_rect(@target_health_rect, Gosu::Color::WHITE, 250)
     end
 
-    if @warning
-      @font.draw(@warning,
-        200, 200, 250, 2, 2, Gosu::Color::RED)
+    @msgs.each_with_index do |msg, i|
+      @font.draw(msg,
+        200, (15*i) + 10, 250, 1.2, 0.75, Gosu::Color::WHITE)
     end
 
 
