@@ -12,8 +12,7 @@ sol:
       scale: 1
       npcs:
         valk: 1
-    "space dock":
-      image: "station.png"
+    dock:
       x: 5200
       y: 5350
       scale: 0.2
@@ -94,3 +93,15 @@ proxima:
   music: "blue.wav"
   x: 1000
   y: 1845
+leonis:
+  music: "slow_low.wav"
+  color: blue
+  x: 525
+  y: 1700
+  planets:
+    dock: 
+      scale: 0.2
+      x: 5000
+      y: 5000
+      npcs: 
+        scout: 1

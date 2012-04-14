@@ -15,6 +15,21 @@ class Player < Chingu::GameObject
     super
   end
 
+  def dock
+    dock = $state.game_objects.select do |o|
+      Dock === o
+    end.first
+
+    if dock
+      if Gosu.distance(@x, @y, dock.x, dock.y) < 100
+        @health = @max_health
+        @fuel = @max_fuel
+      else
+        Gosu::Sample.new("sounds/negative.wav").play
+      end
+    end
+  end
+
   def setup
     self.factor = @attrs["factor"]
   end
@@ -89,7 +104,7 @@ class Player < Chingu::GameObject
 
   def next_target
     objs = $state.game_objects.select do |o|
-      [Planet, Npc].include?(o.class)
+      [Dock, Planet, Npc].include?(o.class)
     end
     return if objs.size == 0
     @target_idx ||= objs.index(@target) || 0

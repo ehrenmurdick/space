@@ -31,12 +31,17 @@ class Space < Chingu::GameState
 
     @planets = []
     (@system["planets"]||{}).each do |name, attrs|
-      p = Planet.create
-      p.image = Gosu::Image["assets/planets/#{attrs["image"]}"]
+      if name == "dock"
+        p = Dock.create
+        p.name = "space dock"
+      else
+        p = Planet.create
+        p.image = Gosu::Image["assets/planets/#{attrs["image"]}"]
+        p.name = name
+      end
       p.x = attrs["x"]
       p.y = attrs["y"]
       p.scale = attrs["scale"]
-      p.name = name
       @planets << p
       next unless attrs["npcs"]
       attrs["npcs"].each do |klass, n|
@@ -85,6 +90,7 @@ class Space < Chingu::GameState
     @player.start_firing    if id == Gosu::Button::KbSpace
     @player.warp            if id == Gosu::Button::KbW
     @player.seek_target     if id == Gosu::Button::KbA
+    @player.dock            if id == Gosu::Button::KbD
     @player.ship = "scout"  if id == Gosu::Button::Kb1
     @player.ship = "valk"   if id == Gosu::Button::Kb2
     @player.ship = "destroyer" if id == Gosu::Button::Kb3
