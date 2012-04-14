@@ -1,7 +1,7 @@
 require 'yaml'
 require './src/obj/npc'
 class Space < Chingu::GameState
-  trait :viewport
+  traits :viewport, :timer
   attr_accessor :player, :draw_list
   attr_reader :danger, :song
 
@@ -14,6 +14,13 @@ class Space < Chingu::GameState
     Gosu::Button::Kb6,
     Gosu::Button::Kb7
   ]
+
+  def warn(msg)
+    @warning = msg
+    after(1000) do
+      @warning = nil
+    end
+  end
 
   def initialize(system)
     super()
@@ -212,6 +219,12 @@ class Space < Chingu::GameState
       fill_rect(@target_health, Gosu::Color::RED, 250)
       draw_rect(@target_health_rect, Gosu::Color::WHITE, 250)
     end
+
+    if @warning
+      @font.draw(@warning,
+        200, 200, 250, 2, 2, Gosu::Color::RED)
+    end
+
 
     game_objects.each do |obj|
       x = @map_rect.x + (obj.x / 100) * 2

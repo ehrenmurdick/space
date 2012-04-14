@@ -47,6 +47,7 @@ class Player < Chingu::GameObject
     when Planet
       unless @target.surface
         @neg.play
+        $state.warn "it's unsafe to land here"
         return
       end
       new_state = Land.new(@target)
