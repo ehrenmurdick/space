@@ -1,3 +1,18 @@
+shuttle:
+  animation: "assets/ships/bluescout_32x32.png"
+  factor: 1
+  base_speed: 0.5
+  rotation: 1
+  warp_speed: 1
+  fuel: 200
+  health: 100
+  frames:
+    :drift: 0
+    :thrust: 1
+    :drift_left: 0
+    :thrust_left: 1
+    :thrust_right: 1
+    :drift_right: 0
 scout:
   animation: "assets/ships/bluescout_32x32.png"
   factor: 1

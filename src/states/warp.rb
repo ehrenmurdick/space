@@ -54,6 +54,16 @@ class Warp < Chingu::GameState
 
   def update
     super
+    if @player.x > 10_000 - 640
+      @player.x = 640
+    elsif @player.x < 640
+      @player.x = 10_000 - 640
+    end
+    if @player.y > 10_000 - 480
+      @player.y = 480
+    elsif @player.y < 480
+      @player.y = 10_000 - 480
+    end
     viewport.center_around(@player)
     @bg.x = ((@player.x / 640.0).floor * 640) + (@player.x * 0.2) % 640
     @bg.y = ((@player.y / 480.0).floor * 480) + (@player.y * 0.2) % 480

@@ -11,7 +11,7 @@ class Player < Chingu::GameObject
     @angular = 0
     @velocity_x, @velocity_y = 0, 0
     @rocket = Gosu::Sample.new("sounds/rocket.wav")
-    self.ship = "scout"
+    self.ship = "valk"
     super
   end
 
@@ -47,9 +47,22 @@ class Player < Chingu::GameObject
     @velocity_y = @velocity_y * amt
   end
 
+  def land
+    planet = $state.game_objects.select do |o|
+      Planet === o
+    end.first
+    if planet.nil? || Gosu.distance(@x, @y, planet.x, planet.y) > 100
+      Gosu::Sound["negative.wav"].play
+      return
+    end
+    new_state = Land.new(planet)
+    new_state.player.ship = @ship
+    $window.push_game_state(new_state)
+  end
+
   def warp
     if @target_system == @system || @target_system.nil?
-      Gosu::Sound["negative.wav"]
+      Gosu::Sound["negative.wav"].play
       return
     end
     Gosu::Sound["charge.wav"].play
@@ -184,16 +197,6 @@ class Player < Chingu::GameObject
     @x += @velocity_x
     @y += @velocity_y
 
-    if @x > 10_000 - 640
-      @x = 640
-    elsif @x < 640
-      @x = 10_000 - 640
-    end
-    if @y > 10_000 - 480
-      @y = 480
-    elsif @y < 480
-      @y = 10_000 - 480
-    end
 
       # :drift => 0, 
       # :thrust => 1, 

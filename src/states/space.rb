@@ -91,6 +91,7 @@ class Space < Chingu::GameState
     @player.warp            if id == Gosu::Button::KbW
     @player.seek_target     if id == Gosu::Button::KbA
     @player.dock            if id == Gosu::Button::KbD
+    @player.land            if id == Gosu::Button::KbL
     @player.ship = "scout"  if id == Gosu::Button::Kb1
     @player.ship = "valk"   if id == Gosu::Button::Kb2
     @player.ship = "destroyer" if id == Gosu::Button::Kb3
@@ -126,6 +127,16 @@ class Space < Chingu::GameState
 
   def update
     super
+    if @player.x > 10_000 - 640
+      @player.x = 640
+    elsif @player.x < 640
+      @player.x = 10_000 - 640
+    end
+    if @player.y > 10_000 - 480
+      @player.y = 480
+    elsif @player.y < 480
+      @player.y = 10_000 - 480
+    end
     viewport.center_around(@player)
     @bg.x = ((@player.x / 640.0).floor * 640) + (@player.x * 0.2) % 640
     @bg.y = ((@player.y / 480.0).floor * 480) + (@player.y * 0.2) % 480
