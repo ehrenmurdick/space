@@ -12,7 +12,13 @@ sol:
       scale: 1
       npcs:
         valk: 1
-        scout: 2
+    "space dock":
+      image: "station.png"
+      x: 5200
+      y: 5350
+      scale: 0.2
+      npcs:
+        scout: 1
 procyon:
   color: yellow
   music: "calm.wav"
