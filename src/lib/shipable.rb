@@ -11,7 +11,7 @@ module Shipable
 
     if @attrs["weapons"]
       @weapons = @attrs["weapons"].map do |w|
-        eval(w["type"]).new(self, w["x"], w["y"])
+        w = eval(w["type"]).new(self, w["x"], w["y"])
       end
     end
 
@@ -25,6 +25,11 @@ module Shipable
 
     @speed_factor = @base_speed
     self.factor = @attrs["factor"]
+  end
+
+  def arm(idx)
+    return unless w = @weapons[idx]
+    w.armed = !w.armed
   end
 
   def accel_vector

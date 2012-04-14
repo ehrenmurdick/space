@@ -4,6 +4,17 @@ class Space < Chingu::GameState
   trait :viewport
   attr_accessor :player, :draw_list
   attr_reader :danger, :song
+
+  Numbers = [
+    Gosu::Button::Kb1,
+    Gosu::Button::Kb2,
+    Gosu::Button::Kb3,
+    Gosu::Button::Kb4,
+    Gosu::Button::Kb5,
+    Gosu::Button::Kb6,
+    Gosu::Button::Kb7
+  ]
+
   def initialize(system)
     super()
     @system = YAML.load(File.read("data/systems.yml"))[system]
@@ -96,9 +107,14 @@ class Space < Chingu::GameState
     @player.seek_target     if id == Gosu::Button::KbA
     @player.dock            if id == Gosu::Button::KbD
     @player.land            if id == Gosu::Button::KbL
-    @player.ship = "scout"  if id == Gosu::Button::Kb1
-    @player.ship = "valk"   if id == Gosu::Button::Kb2
-    @player.ship = "destroyer" if id == Gosu::Button::Kb3
+
+    if n = Numbers.index(id)
+      @player.arm(n)
+    end
+
+    @player.ship = "scout"  if id == Gosu::Button::Kb8
+    @player.ship = "valk"   if id == Gosu::Button::Kb9
+    @player.ship = "destroyer" if id == Gosu::Button::Kb0
     $danger.play(true)      if id == Gosu::Button::KbP
 
     exit if id == Gosu::Button::KbQ
@@ -185,6 +201,11 @@ class Space < Chingu::GameState
     fill_rect(@health_level, Gosu::Color::BLUE, 250)
     draw_rect(@health_rect, Gosu::Color::WHITE, 250)
 
+    @player.weapons.each_with_index do |w, i|
+      @font.draw("[#{w.armed ? 'x' : '  '}] #{w.class}",
+        @target_health_rect.x, @target_health_rect.y + (i+1)*20 + 200, 250, 0.5)
+    end
+
     if @player.target.respond_to?(:health)
       @target_health.width = (@player.target.health / @player.target.max_health.to_f) * @target_health_rect.width
       fill_rect(@target_health, Gosu::Color::RED, 250)
@@ -205,7 +226,11 @@ class Space < Chingu::GameState
       when Player
         draw_circle(x, y, 2, Gosu::Color::GREEN)
       when Npc
-        draw_circle(x, y, 2, Gosu::Color::YELLOW)
+        if obj.target == @player
+          draw_circle(x, y, 2, Gosu::Color::RED)
+        else
+          draw_circle(x, y, 2, Gosu::Color::YELLOW)
+        end
       end
     end
   end

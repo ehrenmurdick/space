@@ -76,6 +76,9 @@ class Lander < Player
     if alt == 0
       @velocity_x = 0.95 * @velocity_x
       @velocity_y = 0.95 * @velocity_y
+    else
+      @velocity_x = 0.99 * @velocity_x
+      @velocity_y = 0.99 * @velocity_y
     end
 
     if alt > 1500

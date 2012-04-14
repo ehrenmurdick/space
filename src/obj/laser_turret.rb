@@ -1,8 +1,10 @@
 class LaserTurret
+  attr_accessor :armed
   def initialize(player, x, y)
     @player, @x, @y = player, x, y
     @sound = Gosu::Sample.new("sounds/laser.wav")
     @arc = 180
+    @armed = true
   end
 
   def fire_if_range range
@@ -10,6 +12,7 @@ class LaserTurret
   end
 
   def fire
+    return unless armed
     target = @player.target
     if [Npc, Player].include? target.class
       x, y = Angle.rotate_v(@player.angle, @x, @y)

@@ -5,7 +5,7 @@ class Player < Chingu::GameObject
   attr_accessor :angular, :locked, :velocity_x, :velocity_y, 
       :target, :system, :speed_factor, :thruster, :target_system,
       :fuel, :max_fuel
-  attr_reader :ship, :warp_speed
+  attr_reader :ship, :warp_speed, :weapons
 
   def initialize
     @angular = 0
@@ -24,6 +24,7 @@ class Player < Chingu::GameObject
       if Gosu.distance(@x, @y, dock.x, dock.y) < 100
         @health = @max_health
         @fuel = @max_fuel
+        Gosu::Sound["success.wav"].play
       else
         Gosu::Sample.new("sounds/negative.wav").play
       end
