@@ -20,13 +20,12 @@ class Npc < Chingu::GameObject
   end
 
   def aggro(target)
-    Gosu::Song["assets/music/danger.wav"].play(true)
     return if @aggro
     @aggro = true
     @target = target
     @weapons.each_with_index do |w, i|
       every(w.cycle, :name => "fire#{i}") do
-        w.fire
+        w.fire_if_range(Gosu.distance(x, y, target.x, target.y))
       end
     end
   end

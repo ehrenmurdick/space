@@ -29,6 +29,13 @@ class Space < Chingu::GameState
 
     self.viewport.game_area = [0, 0, 10_000, 10_000] 
 
+    @player = Player.create
+    @player.x = 4500
+    @player.y = 4500
+    @player.angle = 0
+    @player.zorder = 200
+    $player = @player
+
     @planets = []
     (@system["planets"]||{}).each do |name, attrs|
       if name == "dock"
@@ -49,21 +56,18 @@ class Space < Chingu::GameState
           npc = Npc.create
           npc.planet = p
           npc.ship = klass
-          npc.x = p.x
-          npc.y = p.y
+          npc.x = p.x + rand(500) - 250
+          npc.y = p.y + rand(500) - 250
           npc.zorder += 10
+          if Shipable::Ships[klass]["aggressive"]
+            npc.aggro @player
+          end
         end
       end
     end
 
 
 
-    @player = Player.create
-    @player.x = 4500
-    @player.y = 4500
-    @player.angle = 0
-    @player.zorder = 200
-    $player = @player
 
     @player.system = system
 

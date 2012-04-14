@@ -5,6 +5,10 @@ class LaserTurret
     @arc = 180
   end
 
+  def fire_if_range range
+    fire if range < 600
+  end
+
   def fire
     target = @player.target
     if [Npc, Player].include? target.class

@@ -83,6 +83,7 @@ destroyer:
     :thrust_right: 4
     :drift_right: 5
 wraith:
+  aggressive: true
   animation: "assets/ships/wraith_48x32.png"
   factor: 2
   base_speed: 0.3

@@ -38,7 +38,7 @@ kruger:
   color: red
   music: "slow_low.wav"
   x: 500
-  y: 1437
+  y: 1537
   planets:
     alpha:
       image: "planet1.png"
@@ -94,7 +94,7 @@ proxima:
   x: 1000
   y: 1845
 leonis:
-  music: "slow_low.wav"
+  music: "calm.wav"
   color: blue
   x: 525
   y: 1700
