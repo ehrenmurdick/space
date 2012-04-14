@@ -50,6 +50,7 @@ kruger:
         wraith: 2
     beta:
       image: "planet4.png"
+      surface: "surface4.png"
       x: 5000
       y: 4500
       scale: 0.8
