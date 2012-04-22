@@ -68,7 +68,7 @@ class Lander < Player
     end
     self.vz += g
     shadow.x = x
-    shadow.y = y + alt + 10
+    shadow.y = y + (alt/2.0) + 10
     if @booster
       self.vz -= 0.2
     end
