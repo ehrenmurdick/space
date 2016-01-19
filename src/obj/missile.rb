@@ -21,7 +21,7 @@ class Missile < Chingu::GameObject
 
   def update
     @angle += @angular
-    
+
 
     unless @speed < 0.08
       @speed -= (@speed - 0.08) / 10
@@ -45,7 +45,7 @@ class Missile < Chingu::GameObject
       case obj
       when @shooter
       when Asteroid, Npc, Player
-        dist = Gosu.distance(x, y, obj.x, obj.y) 
+        dist = Gosu.distance(x, y, obj.x, obj.y)
         if dist < obj.radius
           collide_with(obj)
         end

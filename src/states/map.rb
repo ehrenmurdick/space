@@ -6,7 +6,7 @@ class Map < Chingu::GameState
     @x, @y = x, y
     super()
     @systems = YAML.load(File.read("data/systems.yml"))
-  end    
+  end
 
   def setup
     @bg = Bg.create
@@ -25,10 +25,10 @@ class Map < Chingu::GameState
       p.factor = 0.5
       @text = Chingu::Text.create(name, :x => p.x, :y => p.y + 10, :zorder => 55, :factor_x => 2.0)
       @text.color = Gosu::Color::RED
-      @text.draw
+      # @text.draw
     end
 
-    self.viewport.game_area = [0, 0, 2000, 2000] 
+    self.viewport.game_area = [0, 0, 2000, 2000]
 
     @cursor = Cursor.create
     @cursor.x = @x
@@ -37,9 +37,9 @@ class Map < Chingu::GameState
     $player = @player
 
     self.input = {
-                  :holding_left => :holding_left, 
-                  :holding_right => :holding_right, 
-                  :holding_up => :holding_up, 
+                  :holding_left => :holding_left,
+                  :holding_right => :holding_right,
+                  :holding_up => :holding_up,
                   :holding_down => :holding_down}
     after(200) do
       self.input[:released_m] = [lambda { revert }]
